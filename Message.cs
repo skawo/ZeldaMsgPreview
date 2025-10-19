@@ -10,6 +10,7 @@ namespace ZeldaMsgPreview
 {
     public class Textbox
     {
+        public Game TargetGame { get; set; }
         public List<byte> DecodedData { get; set; }
         public int StartPosX { get; set; }
         public int StartPosY { get; set; }
@@ -176,7 +177,7 @@ namespace ZeldaMsgPreview
                 float xPosEnd = GameData.OcarinaEndIconXPos - (destBmp.Width == GameData.ScreenWidth ? 0 : 28);
                 float yPosEnd = GetTextboxEndMarkerPosition(destBmp.Height == GameData.ScreenHeight);
                 Bitmap endIcon = EndingGraphic == EndingGraphics.Square ? Properties.Resources.Box_End : Properties.Resources.Box_Triangle;
-                Helpers.DrawImage(destBmp, endIcon, GameData.OcarinaEndIconColor, (int)(16 * ScaleX), (int)(16 * ScaleY), ref xPosEnd, ref yPosEnd, 0);
+                Helpers.DrawImage(destBmp, endIcon, GameData.OcarinaEndIconColor, (int)(GameData.OcarinaCharWidth * ScaleX), (int)(GameData.OcarinaCharHeight * ScaleY), ref xPosEnd, ref yPosEnd, 0);
             }
 
             return destBmp;
@@ -505,7 +506,7 @@ namespace ZeldaMsgPreview
 
 
             Textboxes = new List<Textbox>();
-            Textbox CurTextbox = new Textbox() { Position = TextboxPosition, Type = OcarinaType, IsCredits = IsCredits };
+            Textbox CurTextbox = new Textbox() { TargetGame = TargetGame, Position = TextboxPosition, Type = OcarinaType, IsCredits = IsCredits };
 
             for (int i = 0; i < Data.Length; i++)
             {
@@ -559,7 +560,7 @@ namespace ZeldaMsgPreview
                                 return;
                             }
 
-                            CurTextbox = new Textbox() { Position = TextboxPosition, Type = OcarinaType, IsCredits = IsCredits };
+                            CurTextbox = new Textbox() { TargetGame = TargetGame, Position = TextboxPosition, Type = OcarinaType, IsCredits = IsCredits };
                             break;
                         }
                     case (byte)OcarinaControlCode.PLAYER:
