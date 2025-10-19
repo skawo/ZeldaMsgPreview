@@ -1,0 +1,1816 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1388160B-2CB2-4DBB-9005-61B42BEF4A4F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ZeldaMsgPreview</RootNamespace>
+    <AssemblyName>ZeldaMsgPreview</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GameData.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="Message.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Box_Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Box_Default.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Box_End.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Box_Staff.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Box_Triangle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Box_Wooden.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_2a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_2b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_2c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_2d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_2e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_2f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_3a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_3b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_3c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_3d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_3e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_3f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_4a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_4b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_4c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_4d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_4e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_4f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_5a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_5b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_5c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_5d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_5e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_5f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_6a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_6b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_6c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_6d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_6e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_6f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_7a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_7b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_7c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_7d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_7e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_7f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_8a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_8b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_8c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_8d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_8e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_8f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_9a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_9b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_9c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_9d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_9e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_9f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_21.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_22.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_23.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_25.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_26.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_27.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_28.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_30.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_31.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_33.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_34.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_35.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_36.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_37.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_38.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_39.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_40.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_41.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_42.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_43.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_44.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_45.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_46.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_47.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_49.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_51.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_52.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_53.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_54.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_55.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_56.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_57.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_58.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_59.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_60.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_61.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_62.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_63.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_65.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_66.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_67.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_68.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_69.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_70.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_71.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_72.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_73.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_74.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_75.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_76.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_77.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_78.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_79.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_80.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_81.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_82.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_83.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_84.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_85.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_86.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_87.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_88.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_89.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_90.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_91.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_92.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_93.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_94.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_95.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_96.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_97.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_98.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_99.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_a0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_a1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_a2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_a3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_a4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_a5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_a6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_a7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_a8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_a9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_aa.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\char_ab.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Fading_Box.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_12.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_13.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_14.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_15.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_17.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_19.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_21.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_22.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_23.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_25.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_26.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_27.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_28.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_30.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_31.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_33.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_34.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_35.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_36.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_37.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_38.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_39.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_40.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_41.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_42.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_43.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_44.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_45.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_46.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_47.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_49.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_51.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_52.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_53.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_54.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_55.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_56.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_57.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_58.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_59.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_60.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_61.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_62.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_63.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_65.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_66.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_67.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_68.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_69.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_70.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_71.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_72.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_73.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_74.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_75.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_76.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_77.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_78.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_79.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_80.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_81.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_82.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_83.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_84.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_85.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_86.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_87.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_88.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_89.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_102.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_103.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_104.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_105.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_106.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_107.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_108.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_109.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_110.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_111.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_112.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_113.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_114.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_115.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_116.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_117.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_118.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_119.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_120.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_121.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_Box_Arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_Box_Bomber.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_Box_Default.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_Box_End.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_Box_Staff.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_Box_Triangle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_Box_Wooden.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_2a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_2b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_2c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_2d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_2e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_2f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_3a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_3b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_3c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_3d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_3e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_3f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_4a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_4b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_4c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_4d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_4e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_4f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_5a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_5b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_5c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_5d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_5e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_5f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_6a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_6b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_6c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_6d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_6e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_6f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_7a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_7b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_7c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_7d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_7e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_7f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_8a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_8b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_8c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_8d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_8e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_8f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_9a.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_9b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_9c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_9d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_9e.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_9f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_21.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_22.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_23.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_25.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_26.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_27.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_28.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_30.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_31.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_33.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_34.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_35.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_36.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_37.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_38.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_39.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_40.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_41.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_42.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_43.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_44.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_45.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_46.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_47.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_49.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_51.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_52.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_53.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_54.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_55.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_56.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_57.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_58.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_59.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_60.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_61.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_62.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_63.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_65.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_66.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_67.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_68.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_69.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_70.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_71.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_72.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_73.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_74.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_75.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_76.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_77.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_78.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_79.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_80.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_81.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_82.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_83.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_84.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_85.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_86.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_87.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_88.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_89.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_90.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_91.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_92.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_93.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_94.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_95.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_96.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_97.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_98.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_99.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_a0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_a1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_a2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_a3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_a4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_a5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_a6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_a7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_a8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_a9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_aa.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_ab.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_ac.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_ad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_ae.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_af.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_b0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_b1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_b2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_b3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_b4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_b5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_b6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_b7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_b8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_b9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_ba.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_char_bb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_Fading_Box.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_12.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_13.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_14.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_15.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_17.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_19.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_21.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_22.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_23.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_25.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_26.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_27.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_28.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_30.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_31.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_33.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_34.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_35.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_36.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_37.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_38.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_39.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_40.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_41.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_42.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_51.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_52.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_53.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_54.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_55.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_56.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_57.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_58.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_59.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_60.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_61.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_62.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_63.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_65.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_66.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_68.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_76.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_80.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_82.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_85.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_86.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_87.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_88.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_89.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_90.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_92.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_93.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_94.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_95.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_96.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_97.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_98.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_99.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_100.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_101.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_102.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_103.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_104.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_105.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_107.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_112.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_120.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_121.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_122.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_123.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_124.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_125.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_126.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_127.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_128.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_129.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_130.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_131.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_132.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_133.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_134.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_135.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_136.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_137.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_138.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_139.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_140.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_141.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_142.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_143.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_145.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_147.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_149.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_150.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_151.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_152.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_153.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_154.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_160.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_161.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_170.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_171.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_179.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_180.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_181.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_182.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_183.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_184.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_185.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_220.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_221.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_222.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_223.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_224.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_225.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_226.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_227.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_228.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_229.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_230.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_231.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_232.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_233.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_234.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_235.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_236.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_237.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_238.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_239.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_240.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_301.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_302.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_303.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_521.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_541.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_891.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_1451.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_1471.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_1491.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_xmes_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_xmes_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xmes_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xmes_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Fading_Box1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Box_Blue.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
