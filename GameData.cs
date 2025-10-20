@@ -43,19 +43,12 @@ namespace ZeldaMsgPreview
             Color.FromArgb(255, 255, 255),
             Color.FromArgb(50, 20, 0),
             Color.FromArgb(255, 60, 0),
-            Color.FromArgb(255, 255, 255),
-            Color.FromArgb(255, 255, 255),
-            Color.FromArgb(255, 255, 255),
-            Color.FromArgb(255, 255, 255),
-            Color.FromArgb(255, 255, 255)
         };
 
         public static readonly Color[] TextboxBackgroundBackPrimColors = new Color[]
         {
             Color.FromArgb(0, 0, 0),
             Color.FromArgb(220, 150, 0),
-            Color.FromArgb(0, 0, 0),
-            Color.FromArgb(0, 0, 0)
         };
 
         public static readonly int[] TextboxBackgroundYOffsets = new int[]
@@ -250,7 +243,7 @@ namespace ZeldaMsgPreview
         {
             [OcarinaMsgColor.DEFAULT] = new[]
             {
-                Color.FromArgb(225, 255, 255),   // Default
+                Color.FromArgb(255, 255, 255),   // Default
                 Color.FromArgb(255, 255, 255)    // Wooden
             },
 

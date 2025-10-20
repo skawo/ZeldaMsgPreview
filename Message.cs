@@ -181,12 +181,12 @@ namespace ZeldaMsgPreview
             }
 
             return destBmp;
-
         }
 
         private Bitmap DrawText(Bitmap destBmp, bool realSpaceWidthForce, bool brightenText)
         {
             float curTextPosX = StartPosX;
+            float drawXOffs = (destBmp.Width == GameData.ScreenWidth ? 0 : GameData.OcarinaTextXPosOffset);
             float drawYOffs = GetTextboxYPosition(destBmp.Height == GameData.ScreenHeight);
             float drawStartTextPosY = StartPosY + drawYOffs;
             float curTextPosY = drawStartTextPosY;
@@ -194,7 +194,6 @@ namespace ZeldaMsgPreview
             float curScaleY = ScaleY;
             OcarinaMsgColor defaultColor = GetDefaultColor();
             OcarinaMsgColor curColor = defaultColor;
-
 
             for (int i = 0; i < DecodedData.Count; i++)
             {
@@ -233,16 +232,16 @@ namespace ZeldaMsgPreview
                             {
                                 if (IconN < 102)
                                 {
-                                    float xPosIcon = curTextPosX - 10;
-                                    float yPosIcon = 16;
+                                    float xPosIcon = curTextPosX + StartPosX + drawXOffs - 74;
+                                    float yPosIcon = drawYOffs + 16;
                                     yPosIcon += drawYOffs;
 
                                     Helpers.DrawImage(destBmp, img, Color.White, 32, 32, ref xPosIcon, ref yPosIcon, 32, false);
                                 }
                                 else
                                 {
-                                    float xPosIcon = curTextPosX - 7;
-                                    float yPosIcon = 20;
+                                    float xPosIcon = curTextPosX + StartPosX + drawXOffs - 72;
+                                    float yPosIcon = drawYOffs + 20;
                                     yPosIcon += drawYOffs;
 
                                     Helpers.DrawImage(destBmp, img, Color.White, 24, 24, ref xPosIcon, ref yPosIcon, 32, false);
@@ -430,11 +429,13 @@ namespace ZeldaMsgPreview
             Bitmap bmp = GetBaseImage(ForceFullScreenPreview);
             bmp = DrawBox(bmp);
 
-            StartPosX -= (bmp.Width == GameData.ScreenWidth ? 0 : GameData.OcarinaTextXPosOffset);
+            int drawOffsX = (bmp.Width == GameData.ScreenWidth ? 0 : GameData.OcarinaTextXPosOffset);
+
+            StartPosX -= drawOffsX;
 
             bmp = DrawText(bmp, UseRealSpaceWidth, BrightenText);
 
-            StartPosX += (bmp.Width == GameData.ScreenWidth ? 0 : GameData.OcarinaTextXPosOffset);
+            StartPosX += drawOffsX;
 
             return DrawEndMarker(bmp);
         }
@@ -542,12 +543,12 @@ namespace ZeldaMsgPreview
 
                             CurTextbox.DecodedData.Add(curChar);
 
-                            if (curChar is (byte)OcarinaControlCode.JUMP || curChar is (byte)OcarinaControlCode.DELAY || curChar is (byte)OcarinaControlCode.FADE2)
+                            if (curChar is (byte)OcarinaControlCode.JUMP || curChar is (byte)OcarinaControlCode.FADE2)
                             {
                                 CurTextbox.DecodedData.Add(Data[++i]);
                                 CurTextbox.DecodedData.Add(Data[++i]);
                             }
-                            else if (curChar is (byte)OcarinaControlCode.FADE)
+                            else if (curChar is (byte)OcarinaControlCode.FADE || curChar is (byte)OcarinaControlCode.DELAY)
                             {
                                 CurTextbox.DecodedData.Add(Data[++i]);
                             }
