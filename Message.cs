@@ -56,7 +56,7 @@ namespace ZeldaMsgPreview
 
             using (var g = Graphics.FromImage(bmp))
             {
-                if (Type == TextboxType.None_White)
+                if ((Type == TextboxType.None_White || IsCredits || FullScreenForce) && (Type != TextboxType.None_Black))
                     g.FillRectangle(Brushes.Black, 0, 0, OutputX, OutputY);
                 else
                     bmp.MakeTransparent();
@@ -114,7 +114,7 @@ namespace ZeldaMsgPreview
         {
             int posY = 0;
 
-            if (IsFullscreen && Type <= TextboxType.None_Black)
+            if (!IsCredits && IsFullscreen && Type <= TextboxType.None_Black)
             {
                 switch (Position)
                 {
@@ -234,16 +234,12 @@ namespace ZeldaMsgPreview
                                 {
                                     float xPosIcon = curTextPosX + StartPosX + drawXOffs - 74;
                                     float yPosIcon = drawYOffs + 16;
-                                    yPosIcon += drawYOffs;
-
                                     Helpers.DrawImage(destBmp, img, Color.White, 32, 32, ref xPosIcon, ref yPosIcon, 32, false);
                                 }
                                 else
                                 {
                                     float xPosIcon = curTextPosX + StartPosX + drawXOffs - 72;
                                     float yPosIcon = drawYOffs + 20;
-                                    yPosIcon += drawYOffs;
-
                                     Helpers.DrawImage(destBmp, img, Color.White, 24, 24, ref xPosIcon, ref yPosIcon, 32, false);
                                 }
                             }
@@ -308,7 +304,7 @@ namespace ZeldaMsgPreview
                             if (Icon != -1 || NumChoices == 1 || NumChoices == 3 || (NumChoices == 2 && curTextPosY != drawStartTextPosY))
                                 curTextPosX += 32;
 
-                            curTextPosY += GameData.OcarinaLinebreakSize;
+                            curTextPosY += IsCredits ? GameData.OcarinaLinebreakSizeCredits : GameData.OcarinaLinebreakSize;
                             break;
                         }
                     case (byte)OcarinaControlCode.TWO_CHOICES:
@@ -325,7 +321,7 @@ namespace ZeldaMsgPreview
                             for (int ch = 0; ch < NumChoices; ch++)
                             {
                                 Helpers.DrawImage(destBmp, imgArrow, Color.LimeGreen, (int)(16 * ScaleX), (int)(16 * ScaleY), ref xPosChoice, ref yPosChoice, 0);
-                                yPosChoice += GameData.OcarinaLinebreakSize;
+                                yPosChoice += IsCredits ? GameData.OcarinaLinebreakSizeCredits : GameData.OcarinaLinebreakSize;
                             }
 
                             break;
@@ -485,7 +481,7 @@ namespace ZeldaMsgPreview
             if (Textboxes == null)
                 return null;
 
-            Bitmap temp = Textboxes[0].GetPreview(false, false, true);
+            Bitmap temp = Textboxes[0].GetPreview(UseRealSpaceWidth, ForceFullScreenPreview, BrightenText);
 
             Bitmap bmpOut = new Bitmap(temp.Width, Textboxes.Count * temp.Height);
             bmpOut.MakeTransparent();

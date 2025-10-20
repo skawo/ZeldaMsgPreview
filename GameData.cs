@@ -61,16 +61,16 @@ namespace ZeldaMsgPreview
         public static readonly int OcarinaCharHeight = 16;
 
         public static readonly int OcarinaTextboxXPosition = 34;
-        public static readonly int[] OcarinaTextboxYPositionsCenter = new int[] { 142, 142, 142, 142, 174, 142, };
+        public static readonly int[] OcarinaTextboxYPositionsBottom = new int[] { 142, 142, 142, 142, 174, 142, };
         public static readonly int[] OcarinaTextboxYPositionsTop = new int[] { 38, 38, 38, 38, 174, 38, };
-        public static readonly int[] OcarinaTextboxYPositionsBottom = new int[] { 90, 90, 90, 90, 174, 90, };
+        public static readonly int[] OcarinaTextboxYPositionsCenter = new int[] { 90, 90, 90, 90, 174, 90, };
         public static readonly int[] OcarinaTextboxEndIconOffsets = new int[] { 59, 59, 59, 59, 34, 59, };
 
         public static readonly int OcarinaTextXPosDefault = 60;
         public static readonly int OcarinaTextXPosOffset = 28;
         public static readonly int OcarinaTextXPosCredits = 20;
         public static readonly int OcarinaTextYPosDefault = 8;
-        public static readonly int OcarinaTextYPosCredits = 63;
+        public static readonly int OcarinaTextYPosCredits = 48;
         public static readonly float OcarinaTextScaleDefault = 0.75f;
         public static readonly float OcarinaTextScaleCredits = 0.85f;
 
@@ -79,6 +79,7 @@ namespace ZeldaMsgPreview
         public static readonly Color OcarinaEndIconColor = Color.FromArgb(0, 80, 200);
 
         public static readonly int OcarinaLinebreakSize = 12;
+        public static readonly int OcarinaLinebreakSizeCredits = 6;
         public static readonly int OcarinaChoiceOffset = 0x20;
 
         public static readonly int ScreenWidth = 320;
