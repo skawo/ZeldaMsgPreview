@@ -426,18 +426,27 @@ namespace ZeldaMsgPreview
 
         public Bitmap GetPreview(bool UseRealSpaceWidth = false, bool ForceFullScreenPreview = false, bool BrightenText = true)
         {
-            Bitmap bmp = GetBaseImage(ForceFullScreenPreview);
-            bmp = DrawBox(bmp);
+            Bitmap bmp;
 
-            int drawOffsX = (bmp.Width == GameData.ScreenWidth ? 0 : GameData.OcarinaTextXPosOffset);
+            try
+            {
+                bmp = GetBaseImage(ForceFullScreenPreview);
+                bmp = DrawBox(bmp);
 
-            StartPosX -= drawOffsX;
+                int drawOffsX = (bmp.Width == GameData.ScreenWidth ? 0 : GameData.OcarinaTextXPosOffset);
 
-            bmp = DrawText(bmp, UseRealSpaceWidth, BrightenText);
+                StartPosX -= drawOffsX;
+                bmp = DrawText(bmp, UseRealSpaceWidth, BrightenText);
+                StartPosX += drawOffsX;
 
-            StartPosX += drawOffsX;
+                bmp = DrawEndMarker(bmp);
+            }
+            catch
+            {
+                bmp = null;
+            }
 
-            return DrawEndMarker(bmp);
+            return bmp;
         }
     }
 
@@ -460,8 +469,22 @@ namespace ZeldaMsgPreview
             Decode();
         }
 
+        public Message(Game _TargetGame, byte[] _Data, TextboxPosition _TextboxPosition = TextboxPosition.Dynamic, TextboxType _OcarinaTextboxType = TextboxType.Black, bool _IsCredits = false)
+        {
+            TargetGame = _TargetGame;
+            Data = _Data;
+            OcarinaType = _OcarinaTextboxType;
+            IsCredits = _IsCredits;
+            TextboxPosition = _TextboxPosition;
+
+            Decode();
+        }
+
         public Bitmap GetPreview(bool UseRealSpaceWidth = false, bool ForceFullScreenPreview = false, bool BrightenText = true)
         {
+            if (Textboxes == null)
+                return null;
+
             Bitmap temp = Textboxes[0].GetPreview(false, false, true);
 
             Bitmap bmpOut = new Bitmap(temp.Width, Textboxes.Count * temp.Height);
@@ -476,22 +499,13 @@ namespace ZeldaMsgPreview
                 for (int i = 1; i < Textboxes.Count; i++)
                 {
                     temp = Textboxes[i].GetPreview(UseRealSpaceWidth, ForceFullScreenPreview, BrightenText);
-                    g.DrawImage(temp, 0, temp.Height * i);
+
+                    if (temp != null)
+                        g.DrawImage(temp, 0, temp.Height * i);
                 }
             }
 
             return bmpOut;
-        }
-
-        public Message(Game _TargetGame, byte[] _Data, TextboxPosition _TextboxPosition = TextboxPosition.Dynamic, TextboxType _OcarinaTextboxType = TextboxType.Black, bool _IsCredits = false)
-        {
-            TargetGame = _TargetGame;
-            Data = _Data;
-            OcarinaType = _OcarinaTextboxType;
-            IsCredits = _IsCredits;
-            TextboxPosition = _TextboxPosition;
-
-            Decode();
         }
 
         private void Decode()
@@ -504,159 +518,164 @@ namespace ZeldaMsgPreview
 
         private void DecodeOcarina()
         {
-
-
-            Textboxes = new List<Textbox>();
-            Textbox CurTextbox = new Textbox() { TargetGame = TargetGame, Position = TextboxPosition, Type = OcarinaType, IsCredits = IsCredits };
-
-            for (int i = 0; i < Data.Length; i++)
+            try
             {
-                byte curChar = Data[i];
+                Textboxes = new List<Textbox>();
+                Textbox CurTextbox = new Textbox() { TargetGame = TargetGame, Position = TextboxPosition, Type = OcarinaType, IsCredits = IsCredits };
 
-                switch (curChar)
+                for (int i = 0; i < Data.Length; i++)
                 {
-                    case (byte)OcarinaControlCode.NEW_BOX:
-                    case (byte)OcarinaControlCode.JUMP:
-                    case (byte)OcarinaControlCode.DELAY:
-                    case (byte)OcarinaControlCode.EVENT:
-                    case (byte)OcarinaControlCode.END:
-                    case (byte)OcarinaControlCode.FADE:
-                    case (byte)OcarinaControlCode.FADE2:
-                    case (byte)OcarinaControlCode.PERSISTENT:
-                        {
-                            CurTextbox.IsCredits = IsCredits;
-                            CurTextbox.StartPosX = IsCredits ? GameData.OcarinaTextXPosCredits : GameData.OcarinaTextXPosDefault;
-                            CurTextbox.StartPosY = IsCredits ? GameData.OcarinaTextYPosCredits : GameData.OcarinaTextYPosDefault;
-                            CurTextbox.ScaleX = IsCredits ? GameData.OcarinaTextScaleCredits : GameData.OcarinaTextScaleDefault;
-                            CurTextbox.ScaleY = IsCredits ? GameData.OcarinaTextScaleCredits : GameData.OcarinaTextScaleDefault;
+                    byte curChar = Data[i];
 
-                            if (OcarinaType != TextboxType.None_White && !IsCredits)
+                    switch (curChar)
+                    {
+                        case (byte)OcarinaControlCode.NEW_BOX:
+                        case (byte)OcarinaControlCode.JUMP:
+                        case (byte)OcarinaControlCode.DELAY:
+                        case (byte)OcarinaControlCode.EVENT:
+                        case (byte)OcarinaControlCode.END:
+                        case (byte)OcarinaControlCode.FADE:
+                        case (byte)OcarinaControlCode.FADE2:
+                        case (byte)OcarinaControlCode.PERSISTENT:
                             {
-                                switch (CurTextbox.NumLines)
+                                CurTextbox.IsCredits = IsCredits;
+                                CurTextbox.StartPosX = IsCredits ? GameData.OcarinaTextXPosCredits : GameData.OcarinaTextXPosDefault;
+                                CurTextbox.StartPosY = IsCredits ? GameData.OcarinaTextYPosCredits : GameData.OcarinaTextYPosDefault;
+                                CurTextbox.ScaleX = IsCredits ? GameData.OcarinaTextScaleCredits : GameData.OcarinaTextScaleDefault;
+                                CurTextbox.ScaleY = IsCredits ? GameData.OcarinaTextScaleCredits : GameData.OcarinaTextScaleDefault;
+
+                                if (OcarinaType != TextboxType.None_White && !IsCredits)
                                 {
-                                    case 0: CurTextbox.StartPosY = 26; break;
-                                    case 1: CurTextbox.StartPosY = 20; break;
-                                    case 2: CurTextbox.StartPosY = 16; break;
-                                    default: CurTextbox.StartPosY = 8; break;
+                                    switch (CurTextbox.NumLines)
+                                    {
+                                        case 0: CurTextbox.StartPosY = 26; break;
+                                        case 1: CurTextbox.StartPosY = 20; break;
+                                        case 2: CurTextbox.StartPosY = 16; break;
+                                        default: CurTextbox.StartPosY = 8; break;
+                                    }
                                 }
+
+                                CurTextbox.DecodedData.Add(curChar);
+
+                                if (curChar is (byte)OcarinaControlCode.JUMP || curChar is (byte)OcarinaControlCode.FADE2)
+                                {
+                                    CurTextbox.DecodedData.Add(Data[++i]);
+                                    CurTextbox.DecodedData.Add(Data[++i]);
+                                }
+                                else if (curChar is (byte)OcarinaControlCode.FADE || curChar is (byte)OcarinaControlCode.DELAY)
+                                {
+                                    CurTextbox.DecodedData.Add(Data[++i]);
+                                }
+
+                                Textboxes.Add(CurTextbox);
+
+                                if (curChar != (byte)OcarinaControlCode.NEW_BOX && curChar != (byte)OcarinaControlCode.DELAY)
+                                {
+                                    CurTextbox.IsLastMsg = true;
+                                    return;
+                                }
+
+                                CurTextbox = new Textbox() { TargetGame = TargetGame, Position = TextboxPosition, Type = OcarinaType, IsCredits = IsCredits };
+                                break;
                             }
-
-                            CurTextbox.DecodedData.Add(curChar);
-
-                            if (curChar is (byte)OcarinaControlCode.JUMP || curChar is (byte)OcarinaControlCode.FADE2)
+                        case (byte)OcarinaControlCode.PLAYER:
+                        case (byte)OcarinaControlCode.POINTS:
+                        case (byte)OcarinaControlCode.FISH_WEIGHT:
+                        case (byte)OcarinaControlCode.GOLD_SKULLTULAS:
+                        case (byte)OcarinaControlCode.MARATHON_TIME:
+                        case (byte)OcarinaControlCode.RACE_TIME:
+                        case (byte)OcarinaControlCode.TIME:
                             {
+                                string str = GameData.OcarinaStringConstants[(OcarinaControlCode)curChar];
+                                CurTextbox.DecodedData.AddRange(Encoding.ASCII.GetBytes(str));
+                                break;
+                            }
+                        case (byte)OcarinaControlCode.HIGH_SCORE:
+                            {
+                                byte hsIndex = Data[++i];
+                                string str = GameData.OcarinaHighScoreStringConstants[(OcarinaHighScore)hsIndex];
+                                CurTextbox.DecodedData.AddRange(Encoding.ASCII.GetBytes(str));
+                                break;
+                            }
+                        case (byte)OcarinaControlCode.ICON:
+                            {
+                                byte iconId = Data[++i];
+                                CurTextbox.Icon = iconId;
+
+                                CurTextbox.DecodedData.Add(curChar);
+                                CurTextbox.DecodedData.Add(iconId);
+                                break;
+                            }
+                        case (byte)OcarinaControlCode.BACKGROUND:
+                            {
+                                byte bgId = Data[++i];
+                                byte colorIds = Data[++i];
+                                byte yOffset = Data[++i];
+
+                                CurTextbox.BgId = bgId * 2;
+                                CurTextbox.BgForeColorId = (colorIds & 0xF0) >> 4;
+                                CurTextbox.BgBackColorId = (colorIds & 0x0F);
+                                CurTextbox.BgYPosOffsetId = (yOffset & 0xF0) >> 4;
+                                CurTextbox.BgUnkData = (yOffset & 0x0F);
+                                CurTextbox.NumLines = 2;
+
+                                CurTextbox.DecodedData.AddRange(new[] { curChar, bgId, colorIds, yOffset });
+                                break;
+                            }
+                        case (byte)OcarinaControlCode.COLOR:
+                        case (byte)OcarinaControlCode.SHIFT:
+                            {
+                                CurTextbox.DecodedData.Add(curChar);
+                                CurTextbox.DecodedData.Add(Data[++i]);
+                                break;
+                            }
+                        case (byte)OcarinaControlCode.LINE_BREAK:
+                            {
+                                CurTextbox.NumLines++;
+                                CurTextbox.DecodedData.Add(curChar);
+                                break;
+                            }
+                        case (byte)OcarinaControlCode.TWO_CHOICES:
+                            {
+                                CurTextbox.NumChoices = 2;
+                                CurTextbox.DecodedData.Add(curChar);
+                                break;
+                            }
+                        case (byte)OcarinaControlCode.THREE_CHOICES:
+                            {
+                                CurTextbox.NumChoices = 3;
+                                CurTextbox.DecodedData.Add(curChar);
+                                break;
+                            }
+                        case (byte)OcarinaControlCode.SPEED:
+                            {
+                                CurTextbox.DecodedData.Add(curChar);
+                                CurTextbox.DecodedData.Add(Data[++i]);
+                                break;
+                            }
+                        case (byte)OcarinaControlCode.SOUND:
+                            {
+                                CurTextbox.DecodedData.Add(curChar);
                                 CurTextbox.DecodedData.Add(Data[++i]);
                                 CurTextbox.DecodedData.Add(Data[++i]);
+                                break;
                             }
-                            else if (curChar is (byte)OcarinaControlCode.FADE || curChar is (byte)OcarinaControlCode.DELAY)
+                        case (byte)OcarinaControlCode.DC:
+                        case (byte)OcarinaControlCode.DI:
+                        case (byte)OcarinaControlCode.OCARINA:
+                        case (byte)OcarinaControlCode.NS:
+                        case (byte)OcarinaControlCode.AWAIT_BUTTON:
+                        default:
                             {
-                                CurTextbox.DecodedData.Add(Data[++i]);
+                                CurTextbox.DecodedData.Add(curChar);
+                                break;
                             }
-
-                            Textboxes.Add(CurTextbox);
-
-                            if (curChar != (byte)OcarinaControlCode.NEW_BOX && curChar != (byte)OcarinaControlCode.DELAY)
-                            {
-                                CurTextbox.IsLastMsg = true;
-                                return;
-                            }
-
-                            CurTextbox = new Textbox() { TargetGame = TargetGame, Position = TextboxPosition, Type = OcarinaType, IsCredits = IsCredits };
-                            break;
-                        }
-                    case (byte)OcarinaControlCode.PLAYER:
-                    case (byte)OcarinaControlCode.POINTS:
-                    case (byte)OcarinaControlCode.FISH_WEIGHT:
-                    case (byte)OcarinaControlCode.GOLD_SKULLTULAS:
-                    case (byte)OcarinaControlCode.MARATHON_TIME:
-                    case (byte)OcarinaControlCode.RACE_TIME:
-                    case (byte)OcarinaControlCode.TIME:
-                        {
-                            string str = GameData.OcarinaStringConstants[(OcarinaControlCode)curChar];
-                            CurTextbox.DecodedData.AddRange(Encoding.ASCII.GetBytes(str));
-                            break;
-                        }
-                    case (byte)OcarinaControlCode.HIGH_SCORE:
-                        {
-                            byte hsIndex = Data[++i];
-                            string str = GameData.OcarinaHighScoreStringConstants[(OcarinaHighScore)hsIndex];
-                            CurTextbox.DecodedData.AddRange(Encoding.ASCII.GetBytes(str));
-                            break;
-                        }
-                    case (byte)OcarinaControlCode.ICON:
-                        {
-                            byte iconId = Data[++i];
-                            CurTextbox.Icon = iconId;
-
-                            CurTextbox.DecodedData.Add(curChar);
-                            CurTextbox.DecodedData.Add(iconId);
-                            break;
-                        }
-                    case (byte)OcarinaControlCode.BACKGROUND:
-                        {
-                            byte bgId = Data[++i];
-                            byte colorIds = Data[++i];
-                            byte yOffset = Data[++i];
-
-                            CurTextbox.BgId = bgId * 2;
-                            CurTextbox.BgForeColorId = (colorIds & 0xF0) >> 4;
-                            CurTextbox.BgBackColorId = (colorIds & 0x0F);
-                            CurTextbox.BgYPosOffsetId = (yOffset & 0xF0) >> 4;
-                            CurTextbox.BgUnkData = (yOffset & 0x0F);
-                            CurTextbox.NumLines = 2;
-
-                            CurTextbox.DecodedData.AddRange(new[] { curChar, bgId, colorIds, yOffset });
-                            break;
-                        }
-                    case (byte)OcarinaControlCode.COLOR:
-                    case (byte)OcarinaControlCode.SHIFT:
-                        {
-                            CurTextbox.DecodedData.Add(curChar);
-                            CurTextbox.DecodedData.Add(Data[++i]);
-                            break;
-                        }
-                    case (byte)OcarinaControlCode.LINE_BREAK:
-                        {
-                            CurTextbox.NumLines++;
-                            CurTextbox.DecodedData.Add(curChar);
-                            break;
-                        }
-                    case (byte)OcarinaControlCode.TWO_CHOICES:
-                        {
-                            CurTextbox.NumChoices = 2;
-                            CurTextbox.DecodedData.Add(curChar);
-                            break;
-                        }
-                    case (byte)OcarinaControlCode.THREE_CHOICES:
-                        {
-                            CurTextbox.NumChoices = 3;
-                            CurTextbox.DecodedData.Add(curChar);
-                            break;
-                        }
-                    case (byte)OcarinaControlCode.SPEED:
-                        {
-                            CurTextbox.DecodedData.Add(curChar);
-                            CurTextbox.DecodedData.Add(Data[++i]);
-                            break;
-                        }
-                    case (byte)OcarinaControlCode.SOUND:
-                        {
-                            CurTextbox.DecodedData.Add(curChar);
-                            CurTextbox.DecodedData.Add(Data[++i]);
-                            CurTextbox.DecodedData.Add(Data[++i]);
-                            break;
-                        }
-                    case (byte)OcarinaControlCode.DC:
-                    case (byte)OcarinaControlCode.DI:
-                    case (byte)OcarinaControlCode.OCARINA:
-                    case (byte)OcarinaControlCode.NS:
-                    case (byte)OcarinaControlCode.AWAIT_BUTTON:
-                    default:
-                        {
-                            CurTextbox.DecodedData.Add(curChar);
-                            break;
-                        }
+                    }
                 }
+            }
+            catch
+            {
+                Textboxes = null;
             }
         }
 
