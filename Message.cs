@@ -260,18 +260,18 @@ namespace ZeldaMsgPreview
                             float yPosBgShadow = yPosBg + 1;
 
                             // This makes barely any difference, but~~
-                            if (BgYPosOffsetId > 0 && BgYPosOffsetId < GameData.TextboxBackgroundYOffsets.Length)
-                                yPosBg += GameData.TextboxBackgroundYOffsets[BgYPosOffsetId];
+                            if (BgYPosOffsetId > 0 && BgYPosOffsetId < GameData.OcarinaTextboxBackgroundYOffsets.Length)
+                                yPosBg += GameData.OcarinaTextboxBackgroundYOffsets[BgYPosOffsetId];
 
-                            Color BackColor = GameData.TextboxBackgroundBackPrimColors[0];
+                            Color BackColor = GameData.OcarinaTextboxBackgroundBackPrimColors[0];
 
-                            if (BgBackColorId > 0 && BgBackColorId < GameData.TextboxBackgroundBackPrimColors.Length)
-                                BackColor = GameData.TextboxBackgroundBackPrimColors[BgBackColorId];
+                            if (BgBackColorId > 0 && BgBackColorId < GameData.OcarinaTextboxBackgroundBackPrimColors.Length)
+                                BackColor = GameData.OcarinaTextboxBackgroundBackPrimColors[BgBackColorId];
 
-                            Color ForeColor = GameData.TextboxBackgroundForePrimColors[0];
+                            Color ForeColor = GameData.OcarinaTextboxBackgroundForePrimColors[0];
 
-                            if (BgForeColorId > 0 && BgForeColorId < GameData.TextboxBackgroundForePrimColors.Length)
-                                ForeColor = GameData.TextboxBackgroundForePrimColors[BgForeColorId];
+                            if (BgForeColorId > 0 && BgForeColorId < GameData.OcarinaTextboxBackgroundForePrimColors.Length)
+                                ForeColor = GameData.OcarinaTextboxBackgroundForePrimColors[BgForeColorId];
 
                             Helpers.DrawImage(destBmp, left, BackColor, left.Width, left.Height, ref xPosBgShadow, ref yPosBgShadow, left.Width);
                             Helpers.DrawImage(destBmp, left, ForeColor, left.Width, left.Height, ref xPosBg, ref yPosBg, left.Width);
@@ -462,6 +462,9 @@ namespace ZeldaMsgPreview
             OcarinaType = TextboxType.Black;
             IsCredits = false;
 
+            Array.Copy(GameData.OcarinaFontWidths, GameData.FontWidths, GameData.OcarinaFontWidths.Length);
+
+            SetFontWidths();
             Decode();
         }
 
@@ -473,7 +476,19 @@ namespace ZeldaMsgPreview
             IsCredits = _IsCredits;
             TextboxPosition = _TextboxPosition;
 
+            SetFontWidths();
             Decode();
+        }
+
+        public void SetFontWidths(byte[] widths = null)
+        {
+            if (widths == null)
+            {
+                if (TargetGame == Game.Ocarina)
+                    GameData.FontWidths = GameData.OcarinaFontWidths;
+                else
+                    GameData.FontWidths = GameData.MajoraFontWidths;
+            }
         }
 
         public Bitmap GetPreview(bool UseRealSpaceWidth = false, bool ForceFullScreenPreview = false, bool BrightenText = true)
@@ -677,7 +692,6 @@ namespace ZeldaMsgPreview
 
         private void DecodeMajora()
         {
-
         }
 
     }
