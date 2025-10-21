@@ -22,32 +22,32 @@ namespace ZeldaMsgPreview
         public static readonly Dictionary<MajoraControlCode, string> MajoraStringConstants = new Dictionary<MajoraControlCode, string>()
         {
             {MajoraControlCode.PLAYER,                              "Link"},
-            {MajoraControlCode.SWAMP_CRUISE_HITS,                   "20" },
-            {MajoraControlCode.STRAY_FAIRY_SCORE,                   "20th" },
+            {MajoraControlCode.HS_BOAT_ARCHERY,                   "20" },
+            {MajoraControlCode.STRAY_FAIRIES,                       "20th" },
             {MajoraControlCode.GOLD_SKULLTULAS,                     "20th" },
-            {MajoraControlCode.POSTMAN_RESULTS,                     "00\"00" },
-            {MajoraControlCode.MOON_CRASH_TIME,                     "00\"00" },
-            {MajoraControlCode.DEKU_RESULTS,                        "00\"00" },
-            {MajoraControlCode.TIMER,                               "00\"00" },
-            {MajoraControlCode.TIMER2,                              "00\"00" },
-            {MajoraControlCode.TIMER3,                              "00\"00" },
-            {MajoraControlCode.TIMER4,                              "00\"00" },
+            {MajoraControlCode.TIMER_POSTMAN,                       "0\"00" },
+            {MajoraControlCode.TIMER_MINIGAME1,                     "0\"00" },
+            {MajoraControlCode.TIMER2,                              "0\"00" },
+            {MajoraControlCode.TIMER_MOON_CRASH,                    "0\"00" },
+            {MajoraControlCode.TIMER_MINIGAME2,                     "0\"00" },
+            {MajoraControlCode.TIMER_ENV_HAZARD,                    "0\"00" },
+            {MajoraControlCode.TIME,                                "0\"00" },
             {MajoraControlCode.SHOOTING_GALLERY_RESULT,             "9999" },
             {MajoraControlCode.BANK_PROMPT,                         "0 0 0  Rupee(s)" },
             {MajoraControlCode.RUPEES_ENTERED,                      "500 Rupees" },
             {MajoraControlCode.RUPEES_IN_BANK,                      "5000 Rupees" },
-            {MajoraControlCode.TIME_REMAINING,                      "72:00" },
-            {MajoraControlCode.BET_RUPEES,                          "0 0  Rupees" },
-            {MajoraControlCode.PROMPT_BOMBER_CODE,                  "0 0 0 0 0" },
+            {MajoraControlCode.MOON_CRASH_TIME_REMAINS,             "72:00" },
+            {MajoraControlCode.DOG_RACE_BET_PROMPT,                 "0 0  Rupees" },
+            {MajoraControlCode.BOMBER_CODE_PROMPT,                  "0 0 0 0 0" },
             {MajoraControlCode.SOARING_DESTINATION,                 "Great Bay Coast" },
-            {MajoraControlCode.UNK_D3,                              "----" },
-            {MajoraControlCode.PROMPT_LOTTERY_NUMBER,               "1 1 1" },
+            {MajoraControlCode.TIME_SPEED,                          "Slow" },
+            {MajoraControlCode.LOTTERY_NUMBER_PROMPT,               "1 1 1" },
             {MajoraControlCode.OCEANSIDE_HOUSE_ORDER,               "123456" },
             {MajoraControlCode.WOODFALL_FAIRIES_REMAIN,             "15" },
             {MajoraControlCode.SNOWHEAD_FAIRIES_REMAIN,             "15" },
             {MajoraControlCode.BAY_FAIRIES_REMAIN,                  "15" },
             {MajoraControlCode.IKANA_FAIRIES_REMAIN,                "15" },
-            {MajoraControlCode.SWAMP_CRUISE_RESULT,                 "45" },
+            {MajoraControlCode.BOAT_ARCHERY_RESULT,                 "45" },
             {MajoraControlCode.WINNING_LOTTERY_NUM,                 "000" },
             {MajoraControlCode.PLAYER_LOTTERY_NUM,                  "000" },
             {MajoraControlCode.ITEM_VALUE,                          "500 Rupees" },
@@ -61,16 +61,21 @@ namespace ZeldaMsgPreview
             {MajoraControlCode.MOON_CRASH_HOURS_REMAIN,             "72 hours" },
             {MajoraControlCode.UNTIL_MORNING,                       "23:59" },
             {MajoraControlCode.TOTAL_IN_BANK,                       "5000" },
-            {MajoraControlCode.TOWN_SHOOTING_HIGHSCORE,             "50" },
-            {MajoraControlCode.EPONA_ARCHERY_HIGHSCORE,             "99'99\"99" },
-            {MajoraControlCode.DEKU_HIGHSCORE_DAY1,                 "99'99\"99" },
-            {MajoraControlCode.DEKU_HIGHSCORE_DAY2,                 "99'99\"99" },
-            {MajoraControlCode.DEKU_HIGHSCORE_DAY3,                 "99'99\"99" },
-            {MajoraControlCode.UNK_F4,                              ":0\"00\'" },
-            {MajoraControlCode.UNK_F3,                              "0\"10\'" },
-            {MajoraControlCode.UNK_F2,                              "0" },
-            {MajoraControlCode.UNK_F1,                              "0" },
-            {MajoraControlCode.FISH_WEIGHT,                         "00" },
+            {MajoraControlCode.HS_TOWN_SHOOTING_GALLERY,            "50" },
+            {MajoraControlCode.HS_ROMANI_ARCHERY,                   "99'99\"99" },
+            {MajoraControlCode.HS_DEKU_PLAYGROUND_DAY1,             "99'99\"99" },
+            {MajoraControlCode.HS_DEKU_PLAYGROUND_DAY2,             "99'99\"99" },
+            {MajoraControlCode.HS_DEKU_PLAYGROUND_DAY3,             "99'99\"99" },
+            {MajoraControlCode.HS_TIME_ROMANI_ARCHERY,              ":0\"00\'" },
+            {MajoraControlCode.HS_TIME_BOAT_ARCHERY,                "0\"10\'" },
+            {MajoraControlCode.HS_TIME_PLAYER_LOTTERY,              "0\"10\'" },
+            {MajoraControlCode.HS_UNK,                              "0" },
+            {MajoraControlCode.HS_FISHING,                          "0" },
+            {MajoraControlCode.POINTS_TENS,                         "99" },
+            {MajoraControlCode.POINTS_THOUSANDS,                    "9999" },
+            {MajoraControlCode.DEKU_PLAYGROUND_PLAYER_DAY1,         "Link"},
+            {MajoraControlCode.DEKU_PLAYGROUND_PLAYER_DAY2,         "Link"},
+            {MajoraControlCode.DEKU_PLAYGROUND_PLAYER_DAY3,         "Link"},
         };
 
         public static readonly Dictionary<OcarinaHighScore, string> OcarinaHighScoreStringConstants = new Dictionary<OcarinaHighScore, string>
@@ -121,12 +126,14 @@ namespace ZeldaMsgPreview
         public static readonly int[] OcarinaTextboxEndIconOffsets = new int[] { 59, 59, 59, 59, 34, 59, };
 
         public static readonly int OcarinaTextXPosDefault = 60;
+        public static readonly int MajoraTextXPosDefault = 65;
         public static readonly int OcarinaTextXPosOffset = 28;
         public static readonly int OcarinaTextXPosCredits = 20;
-        public static readonly int OcarinaTextYPosDefault = 8;
-        public static readonly int OcarinaTextYPosCredits = 48;
-        public static readonly float OcarinaTextScaleDefault = 0.75f;
-        public static readonly float OcarinaTextScaleCredits = 0.85f;
+        public static readonly int TextYPosDefault = 8;
+        public static readonly int TextYPosMajoraOcarinaTextbox = 2;
+        public static readonly int TextYPosCredits = 48;
+        public static readonly float TextScaleDefault = 0.75f;
+        public static readonly float TextScaleCredits = 0.85f;
 
         public static readonly int OcarinaEndIconXPos = 158;
         public static readonly int OcarinaEndIconYPos = 102;

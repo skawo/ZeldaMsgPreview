@@ -12,7 +12,7 @@ namespace ZeldaMsgPreview
     {
         public Game TargetGame { get; set; }
         public List<byte> DecodedData { get; set; }
-        public int StartPosX { get; set; }
+        public int[4] StartPosX { get; set; }
         public int StartPosY { get; set; }
         public float ScaleX { get; set; }
         public float ScaleY { get; set; }
@@ -29,12 +29,17 @@ namespace ZeldaMsgPreview
         public TextboxPosition Position { get; set; }
         public short MajoraFirstPrice { get; set; }
         public short MajoraSecondPrice { get; set; }
+        public bool MajoraBoxCenter { get; set; }
         public EndingGraphics EndingGraphic { get; set; }
 
         public bool IsLastMsg { get; set; }
 
         public Textbox()
         {
+            StartPosX = new int[4] { GameData.OcarinaTextXPosDefault, 
+                                     GameData.OcarinaTextXPosDefault, 
+                                     GameData.OcarinaTextXPosDefault, 
+                                     GameData.OcarinaTextXPosDefault };
             DecodedData = new List<byte>();
             MajoraFirstPrice = 500;
             MajoraSecondPrice = 500;
@@ -185,7 +190,7 @@ namespace ZeldaMsgPreview
 
         private Bitmap DrawText(Bitmap destBmp, bool realSpaceWidthForce, bool brightenText)
         {
-            float curTextPosX = StartPosX;
+            float curTextPosX = StartPosX[0];
             float drawXOffs = (destBmp.Width == GameData.ScreenWidth ? 0 : GameData.OcarinaTextXPosOffset);
             float drawYOffs = GetTextboxYPosition(destBmp.Height == GameData.ScreenHeight);
             float drawStartTextPosY = StartPosY + drawYOffs;
@@ -232,13 +237,13 @@ namespace ZeldaMsgPreview
                             {
                                 if (IconN < 102)
                                 {
-                                    float xPosIcon = curTextPosX + StartPosX + drawXOffs - 74;
+                                    float xPosIcon = curTextPosX + StartPosX[0] + drawXOffs - 74;
                                     float yPosIcon = drawYOffs + 16;
                                     Helpers.DrawImage(destBmp, img, Color.White, 32, 32, ref xPosIcon, ref yPosIcon, 32, false);
                                 }
                                 else
                                 {
-                                    float xPosIcon = curTextPosX + StartPosX + drawXOffs - 72;
+                                    float xPosIcon = curTextPosX + StartPosX[0] + drawXOffs - 72;
                                     float yPosIcon = drawYOffs + 20;
                                     Helpers.DrawImage(destBmp, img, Color.White, 24, 24, ref xPosIcon, ref yPosIcon, 32, false);
                                 }
@@ -299,7 +304,7 @@ namespace ZeldaMsgPreview
                         }
                     case (byte)OcarinaControlCode.LINE_BREAK:
                         {
-                            curTextPosX = StartPosX;
+                            curTextPosX = StartPosX[0];
 
                             if (Icon != -1 || NumChoices == 1 || NumChoices == 3 || (NumChoices == 2 && curTextPosY != drawStartTextPosY))
                                 curTextPosX += 32;
@@ -431,9 +436,9 @@ namespace ZeldaMsgPreview
 
                 int drawOffsX = (bmp.Width == GameData.ScreenWidth ? 0 : GameData.OcarinaTextXPosOffset);
 
-                StartPosX -= drawOffsX;
+                StartPosX[0] -= drawOffsX;
                 bmp = DrawText(bmp, UseRealSpaceWidth, BrightenText);
-                StartPosX += drawOffsX;
+                StartPosX[0] += drawOffsX;
 
                 bmp = DrawEndMarker(bmp);
             }
@@ -550,10 +555,10 @@ namespace ZeldaMsgPreview
                         case (byte)OcarinaControlCode.PERSISTENT:
                             {
                                 CurTextbox.IsCredits = IsCredits;
-                                CurTextbox.StartPosX = IsCredits ? GameData.OcarinaTextXPosCredits : GameData.OcarinaTextXPosDefault;
-                                CurTextbox.StartPosY = IsCredits ? GameData.OcarinaTextYPosCredits : GameData.OcarinaTextYPosDefault;
-                                CurTextbox.ScaleX = IsCredits ? GameData.OcarinaTextScaleCredits : GameData.OcarinaTextScaleDefault;
-                                CurTextbox.ScaleY = IsCredits ? GameData.OcarinaTextScaleCredits : GameData.OcarinaTextScaleDefault;
+                                CurTextbox.StartPosX[0] = IsCredits ? GameData.OcarinaTextXPosCredits : GameData.OcarinaTextXPosDefault;
+                                CurTextbox.StartPosY = IsCredits ? GameData.TextYPosCredits : GameData.TextYPosDefault;
+                                CurTextbox.ScaleX = IsCredits ? GameData.TextScaleCredits : GameData.TextScaleDefault;
+                                CurTextbox.ScaleY = IsCredits ? GameData.TextScaleCredits : GameData.TextScaleDefault;
 
                                 if (OcarinaType != TextboxType.None_White && !IsCredits)
                                 {
@@ -562,7 +567,7 @@ namespace ZeldaMsgPreview
                                         case 0: CurTextbox.StartPosY = 26; break;
                                         case 1: CurTextbox.StartPosY = 20; break;
                                         case 2: CurTextbox.StartPosY = 16; break;
-                                        default: CurTextbox.StartPosY = 8; break;
+                                        default: break;
                                     }
                                 }
 
@@ -690,8 +695,293 @@ namespace ZeldaMsgPreview
             }
         }
 
+        private int GetStringPxLength(string str, float ScaleX)
+        {
+            int len = 0;
+
+            foreach (char c in str)
+                len += (int)(GameData.FontWidths[0] * ScaleX);
+
+            return len;
+        }
+
+        private void ProcessMajoraConstantString(byte curChar, Textbox CurTextbox, ref float curLineWidth, int hardcodedNumChars = -1)
+        {
+            string str = GameData.MajoraStringConstants[(MajoraControlCode)curChar];
+            CurTextbox.DecodedData.AddRange(Encoding.ASCII.GetBytes(str));
+
+            if (hardcodedNumChars >= 0)
+                curLineWidth += hardcodedNumChars * (16.0f * CurTextbox.ScaleX);
+            else
+                curLineWidth += GetStringPxLength(str, CurTextbox.ScaleX);
+        }
+
+    
         private void DecodeMajora()
         {
+            try
+            {
+                Textboxes = new List<Textbox>();
+
+                int i = 0;
+
+                byte b1 = Data[i++];
+                byte b2 = Data[i++];
+                int settings = b1;
+                settings <<= 8;
+                settings |= b2;
+
+                bool MajoraTextCenter = ((settings & 0xF000) >> 0xC) == 1;
+                TextboxType BoxType = (TextboxType)((settings & 0xF00) >> 0x8);
+                TextboxPosition BoxPosition = (TextboxPosition)((settings & 0xF0) >> 0x4);
+                bool Unskippable = (settings & 0x1) == 1;
+                bool MajoraDrawInstantly = (settings & 0x3) == 3;
+
+                byte Icon = Data[i++];
+
+                short MajoraNextMessage = (short)((Data[i++] << 8) | Data[i++]);
+                short MajoraFirstItemPrice = (short)((Data[i++] << 8) | Data[i++]);
+                short MajoraSecondItemPrice = (short)((Data[i++] << 8) | Data[i++]);
+                short MajoraPadding = (short)((Data[i++] << 8) | Data[i++]);
+
+                Textbox CurTextbox = new Textbox()
+                {
+                    TargetGame = TargetGame,
+                    Position = BoxPosition,
+                    Type = BoxType,
+                    IsCredits = IsCredits,
+                    MajoraFirstPrice = MajoraFirstItemPrice,
+                    MajoraSecondPrice = MajoraSecondItemPrice,
+                    MajoraBoxCenter = MajoraTextCenter,
+                    ScaleX = IsCredits ? GameData.TextScaleCredits : GameData.TextScaleDefault,
+                    ScaleY = IsCredits ? GameData.TextScaleCredits : GameData.TextScaleDefault,
+                };
+
+                float curLineWidth = 0;
+                int curLine = 0;
+
+                for (; i < Data.Length; i++)
+                {
+                    byte curChar = Data[i];
+
+                    switch (curChar)
+                    {
+                        case (byte)MajoraControlCode.NEW_BOX:
+                        case (byte)MajoraControlCode.NEW_BOX_CENTER:
+                        case (byte)MajoraControlCode.DELAY_NEWBOX:
+                        case (byte)MajoraControlCode.FADE:
+                        case (byte)MajoraControlCode.FADE_SKIPPABLE:
+                        case (byte)MajoraControlCode.EVENT:
+                        case (byte)MajoraControlCode.EVENT2:
+                        case (byte)MajoraControlCode.END:
+                        case (byte)MajoraControlCode.CONTINUE:
+                        case (byte)MajoraControlCode.PERSISTENT:
+                            {
+                                CurTextbox.IsCredits = IsCredits;
+                                CurTextbox.StartPosX[curLine] = GameData.MajoraTextXPosDefault;
+
+                                if (CurTextbox.MajoraBoxCenter)
+                                    CurTextbox.StartPosX[curLine] += (int)(((CurTextbox.ScaleX * 16.0f * 16.0f) - curLineWidth) / 2);
+
+                                curLineWidth = 0;
+
+                                // Technically, Majora uses the OoT routine for drawing credits, but it DOES do a couple things for it...
+                                if (IsCredits)
+                                    CurTextbox.StartPosY = GameData.TextYPosCredits;    
+                                else
+                                    CurTextbox.StartPosY = CurTextbox.Type == TextboxType.Ocarina ? GameData.TextYPosMajoraOcarinaTextbox : GameData.TextYPosDefault;
+
+                                if (CurTextbox.Type != TextboxType.Ocarina && CurTextbox.Type != TextboxType.None_White)
+                                {
+                                    if (curChar == (byte)MajoraControlCode.NEW_BOX_CENTER)
+                                    {
+                                        switch (CurTextbox.NumLines)
+                                        {
+                                            case 0:
+                                            case 1: CurTextbox.StartPosY = 26; break;
+                                            case 2: CurTextbox.StartPosY = 20; break;
+                                            case 3: CurTextbox.StartPosY = 14; break;
+                                            default: break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        switch (CurTextbox.NumLines)
+                                        {
+                                            case 0: CurTextbox.StartPosY = 26; break;
+                                            case 1: CurTextbox.StartPosY = 20; break;
+                                            case 2: CurTextbox.StartPosY = 14; break;
+                                            default: CurTextbox.StartPosY = 8; break;
+                                        }
+                                    }
+                                }
+
+                                CurTextbox.DecodedData.Add(curChar);
+
+                                if (curChar is (byte)MajoraControlCode.FADE || curChar is (byte)MajoraControlCode.FADE_SKIPPABLE || curChar is (byte)MajoraControlCode.DELAY_NEWBOX)
+                                {
+                                    CurTextbox.DecodedData.Add(Data[++i]);
+                                    CurTextbox.DecodedData.Add(Data[++i]);
+                                }
+
+                                Textboxes.Add(CurTextbox);
+
+                                if (curChar != (byte)MajoraControlCode.NEW_BOX && 
+                                    curChar != (byte)MajoraControlCode.NEW_BOX_CENTER &&
+                                    curChar != (byte)MajoraControlCode.DELAY)
+                                {
+                                    CurTextbox.IsLastMsg = true;
+                                    return;
+                                }
+
+                                CurTextbox = new Textbox()
+                                {
+                                    TargetGame = TargetGame,
+                                    Position = BoxPosition,
+                                    Type = BoxType,
+                                    IsCredits = IsCredits,
+                                    MajoraFirstPrice = MajoraFirstItemPrice,
+                                    MajoraSecondPrice = MajoraSecondItemPrice,
+                                    MajoraBoxCenter = MajoraTextCenter,
+                                    ScaleX = IsCredits ? GameData.TextScaleCredits : GameData.TextScaleDefault,
+                                    ScaleY = IsCredits ? GameData.TextScaleCredits : GameData.TextScaleDefault,
+                                };
+
+                                break;
+                            }
+                        case (byte)MajoraControlCode.PLAYER:
+                        case (byte)MajoraControlCode.TIMER_POSTMAN:
+                        case (byte)MajoraControlCode.TIMER_MINIGAME1:
+                        case (byte)MajoraControlCode.TIMER2:
+                        case (byte)MajoraControlCode.TIMER_MOON_CRASH:
+                        case (byte)MajoraControlCode.TIMER_MINIGAME2:
+                        case (byte)MajoraControlCode.TIMER_ENV_HAZARD:
+                        case (byte)MajoraControlCode.SHOOTING_GALLERY_RESULT:
+                        case (byte)MajoraControlCode.BANK_PROMPT:
+                        case (byte)MajoraControlCode.RUPEES_ENTERED:
+                        case (byte)MajoraControlCode.RUPEES_IN_BANK:
+                        case (byte)MajoraControlCode.MOON_CRASH_TIME_REMAINS:
+                        case (byte)MajoraControlCode.STRAY_FAIRIES:
+                        case (byte)MajoraControlCode.GOLD_SKULLTULAS:
+                        case (byte)MajoraControlCode.POINTS_TENS:
+                        case (byte)MajoraControlCode.POINTS_THOUSANDS:
+                        case (byte)MajoraControlCode.DOG_RACE_BET_PROMPT:
+                        case (byte)MajoraControlCode.BOMBER_CODE_PROMPT:
+                        case (byte)MajoraControlCode.SOARING_DESTINATION:
+                        case (byte)MajoraControlCode.WOODFALL_FAIRIES_REMAIN:
+                        case (byte)MajoraControlCode.SNOWHEAD_FAIRIES_REMAIN:
+                        case (byte)MajoraControlCode.BAY_FAIRIES_REMAIN:
+                        case (byte)MajoraControlCode.IKANA_FAIRIES_REMAIN:
+                        case (byte)MajoraControlCode.BOAT_ARCHERY_RESULT:
+                        case (byte)MajoraControlCode.ITEM_VALUE:
+                        case (byte)MajoraControlCode.MOON_CRASH_HOURS_REMAIN:
+                        case (byte)MajoraControlCode.UNTIL_MORNING:
+                        case (byte)MajoraControlCode.HS_TOWN_SHOOTING_GALLERY:
+                        case (byte)MajoraControlCode.DEKU_PLAYGROUND_PLAYER_DAY1:
+                        case (byte)MajoraControlCode.DEKU_PLAYGROUND_PLAYER_DAY2:
+                        case (byte)MajoraControlCode.DEKU_PLAYGROUND_PLAYER_DAY3:
+                        case (byte)MajoraControlCode.HS_BOAT_ARCHERY:
+                            {
+                                ProcessMajoraConstantString(curChar, CurTextbox, ref curLineWidth);
+                                break;
+                            }
+                        case (byte)MajoraControlCode.BOMBER_CODE:
+                            {
+                                ProcessMajoraConstantString(curChar, CurTextbox, ref curLineWidth);
+                                CurTextbox.NumLines++; // Result of OoB read & write bug
+                                break;
+                            }
+                        case (byte)MajoraControlCode.TIME:
+                            {
+                                ProcessMajoraConstantString(curChar, CurTextbox, ref curLineWidth, 6);  // Centering is wrong
+                                break;
+                            }
+                        case (byte)MajoraControlCode.TIME_SPEED:
+                        case (byte)MajoraControlCode.LOTTERY_NUMBER_PROMPT:
+                        case (byte)MajoraControlCode.PLAYER_LOTTERY_NUM:
+                        case (byte)MajoraControlCode.WINNING_LOTTERY_NUM:
+                            {
+                                ProcessMajoraConstantString(curChar, CurTextbox, ref curLineWidth, 3);  // Centering is also wrong
+                                break;
+                            }
+                        case (byte)MajoraControlCode.HS_TIME_BOAT_ARCHERY:
+                        case (byte)MajoraControlCode.HS_TIME_ROMANI_ARCHERY:
+                        case (byte)MajoraControlCode.HS_TIME_PLAYER_LOTTERY:
+                            {
+                                ProcessMajoraConstantString(curChar, CurTextbox, ref curLineWidth, 4);  // Centering is wrong yet again
+                                break;
+                            }
+                        case (byte)MajoraControlCode.OCEANSIDE_HOUSE_ORDER:
+                            {
+                                string str = GameData.MajoraStringConstants[(MajoraControlCode)curChar];
+                                byte[] strb = Encoding.ASCII.GetBytes(str);
+
+                                byte[] colors =
+                                {
+                                    (byte)MajoraControlCode.COLOR_YELLOW,
+                                    (byte)MajoraControlCode.COLOR_RED,
+                                    (byte)MajoraControlCode.COLOR_GREEN,
+                                    (byte)MajoraControlCode.COLOR_YELLOW,
+                                    (byte)MajoraControlCode.COLOR_BLUE,
+                                    (byte)MajoraControlCode.COLOR_RED,
+                                };
+
+                                for (int c = 0; c < strb.Length; c++)
+                                {
+                                    byte color = colors[c % colors.Length];
+                                    CurTextbox.DecodedData.Add(color);
+                                    CurTextbox.DecodedData.Add(strb[c]);
+                                }
+
+                                CurTextbox.DecodedData.Add((byte)MajoraControlCode.COLOR_DEFAULT);
+                                break;
+                            }
+                        case (byte)MajoraControlCode.OCEANSIDE_HOUSE_ORDER_1:
+                        case (byte)MajoraControlCode.OCEANSIDE_HOUSE_ORDER_2:
+                        case (byte)MajoraControlCode.OCEANSIDE_HOUSE_ORDER_3:
+                        case (byte)MajoraControlCode.OCEANSIDE_HOUSE_ORDER_4:
+                        case (byte)MajoraControlCode.OCEANSIDE_HOUSE_ORDER_5:
+                        case (byte)MajoraControlCode.OCEANSIDE_HOUSE_ORDER_6:
+                            {
+                                CurTextbox.DecodedData.Add((byte)MajoraControlCode.COLOR_YELLOW);
+                                ProcessMajoraConstantString(curChar, CurTextbox, ref curLineWidth);
+                                CurTextbox.DecodedData.Add((byte)MajoraControlCode.COLOR_DEFAULT);
+                                break;
+                            }
+
+                        case (byte)MajoraControlCode.BACKGROUND:
+                            {
+                                curLine = 2;
+                                CurTextbox.NumLines = 2;
+                                CurTextbox.MajoraBoxCenter = true;
+                                CurTextbox.DecodedData.Add(curChar);
+                                break;
+                            }
+                        case (byte)MajoraControlCode.TWO_CHOICES:
+                            {
+                                CurTextbox.MajoraBoxCenter = false;
+                                CurTextbox.NumChoices = 2;
+                                CurTextbox.DecodedData.Add(curChar);
+                                break;
+                            }
+                        case (byte)MajoraControlCode.THREE_CHOICES:
+                            {
+                                CurTextbox.MajoraBoxCenter = false;
+                                CurTextbox.NumChoices = 3;
+                                CurTextbox.DecodedData.Add(curChar);
+                                break;
+                            }
+
+                    }
+                }
+            }
+            catch
+            {
+                Textboxes = null;
+
+
+
+            }
         }
 
     }
