@@ -22,7 +22,7 @@ namespace ZeldaMsgPreview
         public static readonly Dictionary<MajoraControlCode, string> MajoraStringConstants = new Dictionary<MajoraControlCode, string>()
         {
             {MajoraControlCode.PLAYER,                              "Link"},
-            {MajoraControlCode.HS_BOAT_ARCHERY,                   "20" },
+            {MajoraControlCode.HS_BOAT_ARCHERY,                     "20" },
             {MajoraControlCode.STRAY_FAIRIES,                       "20th" },
             {MajoraControlCode.GOLD_SKULLTULAS,                     "20th" },
             {MajoraControlCode.TIMER_POSTMAN,                       "0\"00" },
@@ -116,8 +116,8 @@ namespace ZeldaMsgPreview
             2
         };
 
-        public static readonly int OcarinaCharWidth = 16;
-        public static readonly int OcarinaCharHeight = 16;
+        public static readonly int CharWidth = 16;
+        public static readonly int CharHeight = 16;
 
         public static readonly int OcarinaTextboxXPosition = 34;
         public static readonly int[] OcarinaTextboxYPositionsBottom = new int[] { 142, 142, 142, 142, 174, 142, };

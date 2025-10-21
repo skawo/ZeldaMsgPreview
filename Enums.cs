@@ -141,7 +141,7 @@ namespace ZeldaMsgPreview
         NEW_BOX = 0x10,
         LINE_BREAK = 0x11,
         NEW_BOX_CENTER = 0x12,
-        RESET_CURSOR = 0x13,
+        CR = 0x13,
         SHIFT = 0x14,
         CONTINUE = 0x15,
         PLAYER = 0x16,

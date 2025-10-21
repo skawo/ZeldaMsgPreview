@@ -12,7 +12,7 @@ namespace ZeldaMsgPreview
     {
         public Game TargetGame { get; set; }
         public List<byte> DecodedData { get; set; }
-        public int[4] StartPosX { get; set; }
+        public int[] StartPosX { get; set; }
         public int StartPosY { get; set; }
         public float ScaleX { get; set; }
         public float ScaleY { get; set; }
@@ -182,7 +182,7 @@ namespace ZeldaMsgPreview
                 float xPosEnd = GameData.OcarinaEndIconXPos - (destBmp.Width == GameData.ScreenWidth ? 0 : 28);
                 float yPosEnd = GetTextboxEndMarkerPosition(destBmp.Height == GameData.ScreenHeight);
                 Bitmap endIcon = EndingGraphic == EndingGraphics.Square ? Properties.Resources.Box_End : Properties.Resources.Box_Triangle;
-                Helpers.DrawImage(destBmp, endIcon, GameData.OcarinaEndIconColor, (int)(GameData.OcarinaCharWidth * ScaleX), (int)(GameData.OcarinaCharHeight * ScaleY), ref xPosEnd, ref yPosEnd, 0);
+                Helpers.DrawImage(destBmp, endIcon, GameData.OcarinaEndIconColor, (int)(GameData.CharWidth * ScaleX), (int)(GameData.CharHeight * ScaleY), ref xPosEnd, ref yPosEnd, 0);
             }
 
             return destBmp;
@@ -365,7 +365,7 @@ namespace ZeldaMsgPreview
             if (character == ' ')
             {
                 posX += realSpaceWidthForce
-                    ? GameData.FontWidths[0] * scaleX
+                    ? Message.GetCharacterWidth(0, scaleX)
                     : 6.0f;
                 return destBmp;
             }
@@ -404,22 +404,22 @@ namespace ZeldaMsgPreview
                 {
                     shadowBmp = Helpers.Colorize(shadowBmp, Color.Black);
                     shadowBmp.SetResolution(g.DpiX, g.DpiY);
-                    g.DrawImage(shadowBmp, new Rectangle((int)posX + 1, (int)posY + 1, (int)(GameData.OcarinaCharWidth * scaleX), (int)(GameData.OcarinaCharHeight * scaleY)));
+                    g.DrawImage(shadowBmp, new Rectangle((int)posX + 1, (int)posY + 1, (int)(GameData.CharWidth * scaleX), (int)(GameData.CharHeight * scaleY)));
                 }
 
                 // Draw character
-                g.DrawImage(charBmp, new Rectangle((int)posX, (int)posY, (int)(GameData.OcarinaCharWidth * scaleX), (int)(GameData.OcarinaCharHeight * scaleY)));
+                g.DrawImage(charBmp, new Rectangle((int)posX, (int)posY, (int)(GameData.CharWidth * scaleX), (int)(GameData.CharHeight * scaleY)));
             }
 
             // Advance position for next character
             try
             {
-                posX += (int)(GameData.FontWidths[character - 0x20] * scaleX);
+                posX += (int)Message.GetCharacterWidth((byte)(character - 0x20), scaleX); 
             }
             catch
             {
                 // Fallback width
-                posX += 16 * scaleX;
+                posX += GameData.CharWidth * scaleX;
             }
 
             return destBmp;
@@ -695,12 +695,24 @@ namespace ZeldaMsgPreview
             }
         }
 
-        private int GetStringPxLength(string str, float ScaleX)
+        public static int GetCharacterWidth(byte c, float ScaleX)
+        {
+            int width = 0;
+
+            if (GameData.FontData.Length > c)
+                width += (int)(GameData.FontWidths[c] * ScaleX);
+            else
+                width += (int)(GameData.CharWidth * ScaleX);
+
+            return width;
+        }
+
+        public static int GetStringPxLength(string str, float ScaleX)
         {
             int len = 0;
 
             foreach (char c in str)
-                len += (int)(GameData.FontWidths[0] * ScaleX);
+                GetCharacterWidth((byte)c, ScaleX);
 
             return len;
         }
@@ -971,6 +983,50 @@ namespace ZeldaMsgPreview
                                 CurTextbox.DecodedData.Add(curChar);
                                 break;
                             }
+                        case (byte)MajoraControlCode.CR:
+                        case (byte)MajoraControlCode.LINE_BREAK:
+                            {
+                                CurTextbox.DecodedData.Add(curChar);
+                                CurTextbox.StartPosX[curLine] = GameData.MajoraTextXPosDefault;
+
+                                if (CurTextbox.MajoraBoxCenter)
+                                    CurTextbox.StartPosX[curLine] += (int)(((CurTextbox.ScaleX * 16.0f * 16.0f) - curLineWidth) / 2);
+
+                                curLine++;
+                                curLineWidth = 0;
+
+                                if (curChar == (byte)MajoraControlCode.LINE_BREAK)
+                                    CurTextbox.NumLines++;
+
+                                break;
+                            }
+                        case (byte)MajoraControlCode.DC:
+                        case (byte)MajoraControlCode.DI:
+                            {
+                                CurTextbox.DecodedData.Add(curChar);
+                                break;
+                            }
+                        case (byte)MajoraControlCode.TEXT_SPEED:
+                            {
+                                CurTextbox.DecodedData.Add(curChar);
+                                CurTextbox.DecodedData.Add(0);
+                                i++;
+                                break;
+                            }
+                        case (byte)MajoraControlCode.SOUND:
+                        case (byte)MajoraControlCode.DELAY:
+                            {
+                                CurTextbox.DecodedData.Add(curChar);
+                                CurTextbox.DecodedData.Add(Data[++i]);
+                                CurTextbox.DecodedData.Add(Data[++i]);
+                                break;
+                            }
+                        default:
+                            {
+                                CurTextbox.DecodedData.Add(curChar);
+                                curLineWidth += GetCharacterWidth(curChar, CurTextbox.ScaleX);
+                                break;
+                            }
 
                     }
                 }
@@ -978,9 +1034,6 @@ namespace ZeldaMsgPreview
             catch
             {
                 Textboxes = null;
-
-
-
             }
         }
 
