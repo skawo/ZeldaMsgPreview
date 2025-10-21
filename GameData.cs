@@ -33,15 +33,15 @@ namespace ZeldaMsgPreview
             {MajoraControlCode.TIMER_ENV_HAZARD,                    "0\"00" },
             {MajoraControlCode.TIME,                                "0\"00" },
             {MajoraControlCode.SHOOTING_GALLERY_RESULT,             "9999" },
-            {MajoraControlCode.BANK_PROMPT,                         "0 0 0  Rupee(s)" },
+            {MajoraControlCode.BANK_PROMPT,                         "000 Rupee(s)" },
             {MajoraControlCode.RUPEES_ENTERED,                      "500 Rupees" },
             {MajoraControlCode.RUPEES_IN_BANK,                      "5000 Rupees" },
             {MajoraControlCode.MOON_CRASH_TIME_REMAINS,             "72:00" },
-            {MajoraControlCode.DOG_RACE_BET_PROMPT,                 "0 0  Rupees" },
-            {MajoraControlCode.BOMBER_CODE_PROMPT,                  "0 0 0 0 0" },
+            {MajoraControlCode.DOG_RACE_BET_PROMPT,                 "00  Rupees" },
+            {MajoraControlCode.BOMBER_CODE_PROMPT,                  "00000" },
             {MajoraControlCode.SOARING_DESTINATION,                 "Great Bay Coast" },
             {MajoraControlCode.TIME_SPEED,                          "Slow" },
-            {MajoraControlCode.LOTTERY_NUMBER_PROMPT,               "1 1 1" },
+            {MajoraControlCode.LOTTERY_NUMBER_PROMPT,               "111" },
             {MajoraControlCode.OCEANSIDE_HOUSE_ORDER,               "123456" },
             {MajoraControlCode.WOODFALL_FAIRIES_REMAIN,             "15" },
             {MajoraControlCode.SNOWHEAD_FAIRIES_REMAIN,             "15" },
@@ -110,37 +110,43 @@ namespace ZeldaMsgPreview
             Color.FromArgb(220, 150, 0),
         };
 
-        public static readonly int[] OcarinaTextboxBackgroundYOffsets = new int[]
+        public static readonly int[] OcarinaTextboxBackgroundShadowOffsets = new int[]
         {
             1,
             2
         };
 
+        public static readonly int SpaceWidth = 6;
         public static readonly int CharWidth = 16;
         public static readonly int CharHeight = 16;
 
         public static readonly int OcarinaTextboxXPosition = 34;
-        public static readonly int[] OcarinaTextboxYPositionsBottom = new int[] { 142, 142, 142, 142, 174, 142, };
-        public static readonly int[] OcarinaTextboxYPositionsTop = new int[] { 38, 38, 38, 38, 174, 38, };
-        public static readonly int[] OcarinaTextboxYPositionsCenter = new int[] { 90, 90, 90, 90, 174, 90, };
+        public static readonly int[] TextboxYPositionsBottom = new int[] { 142, 142, 142, 142, 174, 142, };
+        public static readonly int[] TextboxYPositionsTop = new int[] { 38, 38, 38, 38, 174, 38, };
+        public static readonly int[] TextboxYPositionsCenter = new int[] { 90, 90, 90, 90, 174, 90, };
         public static readonly int[] OcarinaTextboxEndIconOffsets = new int[] { 59, 59, 59, 59, 34, 59, };
 
         public static readonly int OcarinaTextXPosDefault = 60;
         public static readonly int MajoraTextXPosDefault = 65;
-        public static readonly int OcarinaTextXPosOffset = 28;
+        public static readonly int MajoraTextXPosBombers = 50;
+        public static readonly int CroppedXPosOffset = 28;
         public static readonly int OcarinaTextXPosCredits = 20;
         public static readonly int TextYPosDefault = 8;
         public static readonly int TextYPosMajoraOcarinaTextbox = 2;
         public static readonly int TextYPosCredits = 48;
         public static readonly float TextScaleDefault = 0.75f;
         public static readonly float TextScaleCredits = 0.85f;
+        public static readonly float TextScaleBombers = 1.4f;
 
         public static readonly int OcarinaEndIconXPos = 158;
         public static readonly int OcarinaEndIconYPos = 102;
         public static readonly Color OcarinaEndIconColor = Color.FromArgb(0, 80, 200);
 
-        public static readonly int OcarinaLinebreakSize = 12;
-        public static readonly int OcarinaLinebreakSizeCredits = 6;
+        public static readonly Color MajoraBackgroundTagColor = Color.FromArgb(255, 60, 0);
+
+        public static readonly int LinebreakSizeBombers = 30;
+        public static readonly int LinebreakSize = 12;
+        public static readonly int LinebreakSizeCredits = 6;
         public static readonly int OcarinaChoiceOffset = 0x20;
 
         public static readonly int ScreenWidth = 320;
@@ -529,6 +535,7 @@ namespace ZeldaMsgPreview
                 Color.FromArgb(255, 255, 255),
                 Color.FromArgb(0, 0, 0),
                 Color.FromArgb(0, 0, 0),
+                Color.FromArgb(0, 0, 0),
             },
 
             [MajoraControlCode.COLOR_RED] = new[]
@@ -536,6 +543,7 @@ namespace ZeldaMsgPreview
                 Color.FromArgb(255, 60, 60),
                 Color.FromArgb(255, 120, 0),
                 Color.FromArgb(255, 60, 60),
+                Color.FromArgb(195, 0, 0),
                 Color.FromArgb(255, 60, 60),
             },
 
@@ -544,160 +552,92 @@ namespace ZeldaMsgPreview
                 Color.FromArgb(70, 255, 80),
                 Color.FromArgb(70, 255, 80),
                 Color.FromArgb(70, 255, 80),
-                Color.FromArgb(124, 179, 255),
+                Color.FromArgb(70, 255, 80),
+                Color.FromArgb(110, 170, 255),
             },
 
             [MajoraControlCode.COLOR_BLUE] = new[]
             {
-                Color.FromArgb(80, 110, 255),
                 Color.FromArgb(80, 90, 255),
                 Color.FromArgb(80, 110, 255),
-                Color.FromArgb(80, 110, 255),
+                Color.FromArgb(80, 90, 255),
+                Color.FromArgb(80, 90, 255),
+                Color.FromArgb(80, 90, 255),
             },
 
             [MajoraControlCode.COLOR_YELLOW] = new[]
             {
-                Color.FromArgb(255, 255, 30),
                 Color.FromArgb(255, 255, 50),
                 Color.FromArgb(255, 255, 30),
-                Color.FromArgb(255, 255, 30),
+                Color.FromArgb(255, 255, 50),
+                Color.FromArgb(255, 255, 50),
+                Color.FromArgb(255, 255, 50),
             },
 
             [MajoraControlCode.COLOR_NAVY] = new[]
             {
-                Color.FromArgb(74, 138, 234),
-                Color.FromArgb(74, 138, 234),
-                Color.FromArgb(74, 138, 234),
-                Color.FromArgb(74, 138, 234),
+                Color.FromArgb(80, 150, 255),
+                Color.FromArgb(90, 180, 255),
+                Color.FromArgb(80, 150, 255),
+                Color.FromArgb(80, 150, 255),
+                Color.FromArgb(80, 150, 255),
             },
 
             [MajoraControlCode.COLOR_PINK] = new[]
             {
-                Color.FromArgb(255, 192, 203),
-                Color.FromArgb(255, 192, 203),
-                Color.FromArgb(255, 192, 203),
-                Color.FromArgb(255, 192, 203),
+                Color.FromArgb(255, 150, 180),
+                Color.FromArgb(210, 100, 255),
+                Color.FromArgb(255, 150, 180),
+                Color.FromArgb(255, 150, 180),
+                Color.FromArgb(255, 150, 180),
             },
 
             [MajoraControlCode.COLOR_SILVER] = new[]
             {
-                Color.FromArgb(192, 192, 192),
-                Color.FromArgb(192, 192, 192),
-                Color.FromArgb(192, 192, 192),
-                Color.FromArgb(192, 192, 192),
+                Color.FromArgb(170, 170, 170),
+                Color.FromArgb(170, 170, 170),
+                Color.FromArgb(170, 170, 170),
+                Color.FromArgb(170, 170, 170),
+                Color.FromArgb(170, 170, 170),
             },
 
             [MajoraControlCode.COLOR_ORANGE] = new[]
             {
-                Color.FromArgb(255, 165, 0),
-                Color.FromArgb(255, 165, 0),
-                Color.FromArgb(255, 165, 0),
-                Color.FromArgb(255, 165, 0),
+                Color.FromArgb(255, 130, 30),
+                Color.FromArgb(255, 130, 30),
+                Color.FromArgb(255, 130, 30),
+                Color.FromArgb(255, 130, 30),
+                Color.FromArgb(255, 130, 30),
             },
+        };
 
-            [MajoraControlCode.A_BUTTON] = new[]
-            {
-                Color.FromArgb(65, 105, 225),
-                Color.FromArgb(65, 105, 225),
-                Color.FromArgb(65, 105, 225),
-                Color.FromArgb(65, 105, 225),
-            },
+        public static readonly Dictionary<MajoraControlCode, Color> MajoraButtonRGB = new Dictionary<MajoraControlCode, Color>
+        {
+            [MajoraControlCode.COLOR_RED] = Color.FromArgb(255, 60, 60),
+            [MajoraControlCode.COLOR_GREEN] = Color.FromArgb(70, 255, 80),
+            [MajoraControlCode.COLOR_BLUE] = Color.FromArgb(80, 90, 255),
+            [MajoraControlCode.COLOR_YELLOW] = Color.FromArgb(255, 255, 50),
+            [MajoraControlCode.COLOR_NAVY] = Color.FromArgb(80, 150, 255),
+            [MajoraControlCode.COLOR_PINK] = Color.FromArgb(255, 150, 180),
+            [MajoraControlCode.COLOR_SILVER] = Color.FromArgb(180, 180, 200),
+            [MajoraControlCode.COLOR_ORANGE] = Color.FromArgb(255, 130, 30),
+        };
 
-            [MajoraControlCode.B_BUTTON] = new[]
-            {
-                Color.FromArgb(50, 205, 50),
-                Color.FromArgb(50, 205, 50),
-                Color.FromArgb(50, 205, 50),
-                Color.FromArgb(50, 205, 50),
-            },
-
-            [MajoraControlCode.C_BUTTON] = new[]
-            {
-                Color.FromArgb(255, 255, 0),
-                Color.FromArgb(255, 255, 0),
-                Color.FromArgb(255, 255, 0),
-                Color.FromArgb(255, 255, 0),
-            },
-
-            [MajoraControlCode.R_BUTTON] = new[]
-            {
-                Color.FromArgb(255, 255, 255),
-                Color.FromArgb(255, 255, 255),
-                Color.FromArgb(0, 0, 0),
-                Color.FromArgb(0, 0, 0),
-            },
-
-            [MajoraControlCode.L_BUTTON] = new[]
-            {
-                Color.FromArgb(255, 255, 255),
-                Color.FromArgb(255, 255, 255),
-                Color.FromArgb(0, 0, 0),
-                Color.FromArgb(0, 0, 0),
-            },
-
-            [MajoraControlCode.Z_BUTTON] = new[]
-            {
-                Color.FromArgb(255, 255, 255),
-                Color.FromArgb(255, 255, 255),
-                Color.FromArgb(0, 0, 0),
-                Color.FromArgb(0, 0, 0),
-            },
-
-            [MajoraControlCode.C_UP] = new[]
-            {
-                Color.FromArgb(255, 255, 0),
-                Color.FromArgb(255, 255, 0),
-                Color.FromArgb(255, 255, 0),
-                Color.FromArgb(255, 255, 0),
-            },
-
-            [MajoraControlCode.C_DOWN] = new[]
-            {
-                Color.FromArgb(255, 255, 0),
-                Color.FromArgb(255, 255, 0),
-                Color.FromArgb(255, 255, 0),
-                Color.FromArgb(255, 255, 0),
-            },
-
-            [MajoraControlCode.C_LEFT] = new[]
-            {
-                Color.FromArgb(255, 255, 0),
-                Color.FromArgb(255, 255, 0),
-                Color.FromArgb(255, 255, 0),
-                Color.FromArgb(255, 255, 0),
-            },
-
-            [MajoraControlCode.C_RIGHT] = new[]
-            {
-                Color.FromArgb(255, 255, 0),
-                Color.FromArgb(255, 255, 0),
-                Color.FromArgb(255, 255, 0),
-                Color.FromArgb(255, 255, 0),
-            },
-
-            [MajoraControlCode.TRIANGLE] = new[]
-            {
-                Color.FromArgb(50, 205, 50),
-                Color.FromArgb(50, 205, 50),
-                Color.FromArgb(50, 205, 50),
-                Color.FromArgb(50, 205, 50),
-            },
-
-            [MajoraControlCode.CONTROL_STICK] = new[]
-            {
-                Color.FromArgb(255, 255, 255),
-                Color.FromArgb(255, 255, 255),
-                Color.FromArgb(0, 0, 0),
-                Color.FromArgb(0, 0, 0),
-            },
-
-            [MajoraControlCode.D_PAD] = new[]
-            {
-                Color.FromArgb(255, 255, 255),
-                Color.FromArgb(255, 255, 255),
-                Color.FromArgb(0, 0, 0),
-                Color.FromArgb(0, 0, 0),
-            },
+        public static readonly Dictionary<MajoraControlCode, MajoraControlCode> MajoraButtonRGBIndexes = new Dictionary<MajoraControlCode, MajoraControlCode>
+        {
+            [MajoraControlCode.A_BUTTON] = MajoraControlCode.COLOR_BLUE,
+            [MajoraControlCode.B_BUTTON] = MajoraControlCode.COLOR_GREEN,
+            [MajoraControlCode.C_BUTTON] = MajoraControlCode.COLOR_YELLOW,
+            [MajoraControlCode.L_BUTTON] = MajoraControlCode.COLOR_SILVER,
+            [MajoraControlCode.R_BUTTON] = MajoraControlCode.COLOR_SILVER,
+            [MajoraControlCode.Z_BUTTON] = MajoraControlCode.COLOR_SILVER,
+            [MajoraControlCode.C_UP] = MajoraControlCode.COLOR_YELLOW,
+            [MajoraControlCode.C_RIGHT] = MajoraControlCode.COLOR_YELLOW,
+            [MajoraControlCode.C_LEFT] = MajoraControlCode.COLOR_YELLOW,
+            [MajoraControlCode.C_DOWN] = MajoraControlCode.COLOR_YELLOW,
+            [MajoraControlCode.TRIANGLE] = MajoraControlCode.COLOR_GREEN,
+            [MajoraControlCode.CONTROL_STICK] = MajoraControlCode.COLOR_SILVER,
+            [MajoraControlCode.D_PAD] = MajoraControlCode.COLOR_SILVER,     // This does not actually exist in the game data, it's just here for crash prevention.
         };
 
         public static Dictionary<TextboxType, int> MajoraTypeColorIndexes = new Dictionary<TextboxType, int>()
@@ -715,8 +655,8 @@ namespace ZeldaMsgPreview
             {TextboxType.Majora_None2,                 0 },
             {TextboxType.Credits,                      0 },
             {TextboxType.Majora_None3,                 0 },
-            {TextboxType.Majora_Bombers_Notebook,      2 },
-            {TextboxType.Majora_None4,                 0 },
+            {TextboxType.Majora_Bombers_Notebook,      4 },
+            {TextboxType.Majora_None4,                 3 },
             {TextboxType.Majora_Red2,                  0 },
 
         };
