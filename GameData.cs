@@ -129,7 +129,7 @@ namespace ZeldaMsgPreview
         public static readonly int OcarinaTextXPosDefault = 60;
         public static readonly int MajoraTextXPosDefault = 65;
         public static readonly int MajoraTextXPosBombers = 50;
-        public static readonly int CroppedXPosOffset = 28;
+        public static readonly int UnCroppedXPosOffset = 28;
         public static readonly int OcarinaTextXPosCredits = 20;
         public static readonly int TextYPosDefault = 8;
         public static readonly int TextYPosMajoraOcarinaTextbox = 2;
