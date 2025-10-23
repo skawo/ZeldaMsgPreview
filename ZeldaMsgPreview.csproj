@@ -57,6 +57,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
@@ -1811,6 +1812,45 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Box_Blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_43.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_6F.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_70.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_72.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_5B.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_67.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_111.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_114.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_91.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_148.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_110.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_106.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\majora_icon_64.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

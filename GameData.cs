@@ -120,16 +120,21 @@ namespace ZeldaMsgPreview
         public static readonly int CharWidth = 16;
         public static readonly int CharHeight = 16;
 
-        public static readonly int OcarinaTextboxXPosition = 34;
-        public static readonly int[] TextboxYPositionsBottom = new int[] { 142, 142, 142, 142, 174, 142, };
-        public static readonly int[] TextboxYPositionsTop = new int[] { 38, 38, 38, 38, 174, 38, };
-        public static readonly int[] TextboxYPositionsCenter = new int[] { 90, 90, 90, 90, 174, 90, };
-        public static readonly int[] OcarinaTextboxEndIconOffsets = new int[] { 59, 59, 59, 59, 34, 59, };
+        public static readonly int TextboxXPosition = 34;
+        public static readonly int[] OcarinaTextboxYPositionsBottom = new int[] { 142, 142, 142, 142, 174, 142, };
+        public static readonly int[] OcarinaTextboxYPositionsTop = new int[] { 38, 38, 38, 38, 174, 38, };
+        public static readonly int[] OcarinaTextboxYPositionsCenter = new int[] { 90, 90, 90, 90, 174, 90, };
 
-        public static readonly int OcarinaTextXPosDefault = 60;
-        public static readonly int MajoraTextXPosDefault = 65;
+        public static readonly int[] MajoraTextboxYPositionsBottom = new int[] { 142, 142, 142, 142, 174, 142, 142, 142, 142, 130, 174, 0, 142, 142, 142, 142 };
+        public static readonly int[] MajoraTextboxYPositionsTop = new int[] { 38, 38, 38, 38, 174, 38, 38, 38, 38, 60, 174, 0, 38, 38, 38, 38 };
+        public static readonly int[] MajoraTextboxYPositionsCenter = new int[] { 90, 90, 90, 90, 174, 90, 90, 90, 90, 90, 174, 0, 90, 90, 90, 90 };
+
+        public static readonly int[] OcarinaTextboxEndIconOffsets = new int[] { 59, 59, 59, 59, 34, 59, };
+        public static readonly int[] MajoraTextboxEndIconOffsets = new int[] { 59, 59, 59, 59, 34, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59 };
+
+        public static readonly int TextXPosDefault = 65;
         public static readonly int MajoraTextXPosBombers = 50;
-        public static readonly int UnCroppedXPosOffset = 28;
+        public static readonly int CroppedXPosOffset = TextboxXPosition;
         public static readonly int OcarinaTextXPosCredits = 20;
         public static readonly int TextYPosDefault = 8;
         public static readonly int TextYPosMajoraOcarinaTextbox = 2;
