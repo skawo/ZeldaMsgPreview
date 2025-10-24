@@ -16,6 +16,8 @@ namespace ZeldaMsgPreview
         public int[] MajoraCenteringOffset { get; set; }
         public int StartPosX { get; set; }
         public int StartPosY { get; set; }
+        public int MajoraIconPosX { get; set; }
+        public int MajoraIconPosY { get; set; }
         public float ScaleX { get; set; }
         public float ScaleY { get; set; }
         public int Icon { get; set; }
@@ -55,18 +57,20 @@ namespace ZeldaMsgPreview
         {
             int posY = 0;
 
-            if (!IsCredits && IsFullscreen && Type <= TextboxType.None_Black)
+            if (MajoraIsBomberNotebook && IsFullscreen)
+                return 350;
+            else if (!IsCredits && IsFullscreen && Type <= TextboxType.None_Black)
             {
                 switch (Position)
                 {
                     case TextboxPosition.Top:
-                        posY = TargetGame == Game.Majora ? GameData.MajoraTextboxYPositionsTop[(byte)Type] : 
+                        posY = TargetGame == Game.Majora ? GameData.MajoraTextboxYPositionsTop[(byte)Type] :
                                                            GameData.OcarinaTextboxYPositionsTop[(byte)Type]; break;
                     case TextboxPosition.Center:
-                        posY = TargetGame == Game.Majora ? GameData.MajoraTextboxYPositionsCenter[(byte)Type] : 
+                        posY = TargetGame == Game.Majora ? GameData.MajoraTextboxYPositionsCenter[(byte)Type] :
                                                            GameData.OcarinaTextboxYPositionsCenter[(byte)Type]; break;
                     default:
-                        posY = TargetGame == Game.Majora ? GameData.MajoraTextboxYPositionsBottom[(byte)Type] : 
+                        posY = TargetGame == Game.Majora ? GameData.MajoraTextboxYPositionsBottom[(byte)Type] :
                                                            GameData.OcarinaTextboxYPositionsBottom[(byte)Type]; break;
                 }
             }
@@ -80,7 +84,20 @@ namespace ZeldaMsgPreview
             int OutputX = GameData.ScreenWidth;
             int OutputY = GameData.ScreenHeight;
 
-            if (!FullScreenForce && !IsCredits)
+            if (MajoraIsBomberNotebook)
+            {
+                if (FullScreenForce)
+                {
+                    OutputX *= 2;
+                    OutputY *= 2;
+                }
+                else
+                {
+                    OutputX = GameData.TextboxWidthBombers;
+                    OutputY = GameData.TextboxHeightBombers;
+                }
+            }
+            else if (!FullScreenForce && !IsCredits)
             {
                 OutputX = GameData.TextboxWidth;
                 OutputY = GameData.TextboxHeight + 8;
@@ -112,14 +129,15 @@ namespace ZeldaMsgPreview
                 tboxImage = Helpers.ReverseAlphaMask(tboxImage);
                 tboxImage = Helpers.Colorize(tboxImage, colorizeColor);
 
-                destBmp = new Bitmap(280, 50);
-
                 using (Graphics g = Graphics.FromImage(destBmp))
                 {
+                    int posX = (destBmp.Width == GameData.ScreenWidth * 2 ? GameData.TextboxXPosition : 0);
+                    int yPos = GetTextboxYPosition(destBmp.Height == GameData.ScreenHeight * 2);
+
                     tboxImage.SetResolution(g.DpiX, g.DpiY);
-                    g.DrawImage(tboxImage, new Rectangle(0, 0, destBmp.Width / 2, destBmp.Height));
+                    g.DrawImage(tboxImage, new Rectangle(posX, yPos, destBmp.Width / 2, destBmp.Height));
                     tboxImage = Helpers.FlipBitmapX_MonoSafe(tboxImage);
-                    g.DrawImage(tboxImage, new Rectangle(destBmp.Width / 2, 0, destBmp.Width / 2, destBmp.Height));
+                    g.DrawImage(tboxImage, new Rectangle(posX + destBmp.Width / 2, yPos, destBmp.Width / 2, destBmp.Height));
                 }
 
                 return destBmp;
@@ -239,12 +257,12 @@ namespace ZeldaMsgPreview
 
         private Bitmap DrawEndMarker(Bitmap destBmp)
         {
-            if (!IsCredits && EndingGraphic != EndingGraphics.None)
+            if (!IsCredits && EndingGraphic != EndingGraphics.None && !MajoraIsBomberNotebook)
             {
                 float xPosEnd = GameData.OcarinaEndIconXPos - (destBmp.Width == GameData.ScreenWidth ? 0 : 28);
                 float yPosEnd = GetTextboxEndMarkerPosition(destBmp.Height == GameData.ScreenHeight);
                 Bitmap endIcon = EndingGraphic == EndingGraphics.Square ? Properties.Resources.Box_End : Properties.Resources.Box_Triangle;
-                Helpers.DrawImage(destBmp, endIcon, GameData.OcarinaEndIconColor, (int)(GameData.CharWidth * ScaleX), (int)(GameData.CharHeight * ScaleY), ref xPosEnd, ref yPosEnd, 0);
+                Helpers.DrawImage(destBmp, endIcon, GameData.EndIconColor, (int)(GameData.CharWidth * ScaleX), (int)(GameData.CharHeight * ScaleY), ref xPosEnd, ref yPosEnd, 0);
             }
 
             return destBmp;
@@ -392,7 +410,7 @@ namespace ZeldaMsgPreview
 
                             for (int ch = 0; ch < NumChoices; ch++)
                             {
-                                Helpers.DrawImage(destBmp, imgArrow, Color.LimeGreen, (int)(GameData.CharWidth * ScaleX), (int)(GameData.CharHeight * ScaleY), ref xPosChoice, ref yPosChoice, 0);
+                                Helpers.DrawImage(destBmp, imgArrow, GameData.EndIconColor, (int)(GameData.CharWidth * ScaleX), (int)(GameData.CharHeight * ScaleY), ref xPosChoice, ref yPosChoice, 0);
                                 yPosChoice += IsCredits ? GameData.LinebreakSizeCredits : GameData.LinebreakSize;
                             }
 
@@ -425,59 +443,75 @@ namespace ZeldaMsgPreview
             return destBmp;
         }
 
-        private void DrawMajoraIcon(Bitmap destBmp, float xPos, float yPos, ref float textXPos)
+        private void DrawMajoraIcon(Bitmap destBmp, ref float textXPos)
         {
-            if (Icon != (byte)MajoraIcon.NO_ICON)
+            int ItemID = Message.GetMajoraItemIdFromIcon(Icon);
+
+            if (ItemID != (int)ItemId.MESSAGE_ITEM_NONE)
             {
                 string iconResName = $"majora_icon_{Icon.ToString().ToLower()}";
                 Bitmap img = (Bitmap)Properties.Resources.ResourceManager.GetObject(iconResName);
 
-                float xOffs = 14;
-                float yOffs = yPos + 10;
-
-                if  ((Icon == (byte)MajoraIcon.RECOVERY_HEART) ||
-                    (Icon >= (byte)MajoraIcon.GREEN_RUPEE && Icon <= (byte)MajoraIcon.ORANGE_RUPEE))
-                {
-                    xOffs = xPos - 22;
-                    yOffs += 10;
-                }
-                else if (Icon == (byte)MajoraIcon.STRAY_FAIRY)
-                {
-                    xOffs = xPos - 18;
-                    yOffs += 10;
-                }
-                else if (Icon == (byte)MajoraIcon.BOMBERS_NOTEBOOK || 
-                         Icon <= (byte)MajoraIcon.TWINMOLDS_REMAINS) 
-                {
-                    xOffs = xPos - 18;
-                    yOffs += 6;
-                }
-                else if (Icon == (byte)MajoraIcon.EXCLAMATION_MARK)
-                {
-                    xOffs = xPos - 18;
-                    yOffs += 8;
-                }
-                else if (Icon >= (byte)MajoraIcon.ANJU)
-                {
-                    xOffs = xPos - 18;
-                    yOffs += 8;
-                }
-                else if (Icon >= (byte)MajoraIcon.GOLD_SKULLTULA_TOKEN)
-                {
-                    xOffs = xPos - 14;
-                    yOffs += 10;
-                }
-
-                if (MajoraIsBomberNotebook)
-                {
-                    xOffs *= GameData.TextScaleBombers + 2;
-                    yOffs *= GameData.TextScaleBombers;
-                }
+                int drawOffsX = (destBmp.Width == GameData.ScreenWidth ? 0 : GameData.CroppedXPosOffset);
+                float x = MajoraIconPosX - drawOffsX;
+                float y = MajoraIconPosY;
 
                 if (img != null)
-                    Helpers.DrawImage(destBmp, img, Color.White, img.Width, img.Height, ref xOffs, ref yOffs, 0, false);
+                {
+                    if (MajoraIsBomberNotebook)
+                    {
+                        drawOffsX = (destBmp.Width == GameData.ScreenWidth ? 0 : GameData.CroppedXPosOffset);
+                        x = MajoraIconPosX - drawOffsX;
+                        Helpers.DrawImage(destBmp, img, Color.White, (int)(img.Width * GameData.TextScaleBombers), (int)(img.Height * GameData.TextScaleBombers), ref x, ref y, 0, false);
+                    }
+                    else
+                        Helpers.DrawImage(destBmp, img, Color.White, img.Width, img.Height, ref x, ref y, 0, false);
+                }
 
                 textXPos += MajoraIsBomberNotebook ? 50 : 16;
+            }
+        }
+
+        public Bitmap DrawChoiceMajora(Bitmap destBmp)
+        {
+            if (NumChoices < 2)
+                return destBmp;
+
+            GetDrawOffsMajora(destBmp, out float drawXOffs, out float drawYOffs);
+
+            Bitmap imgArrow = EndingGraphic == EndingGraphics.Choice ? Properties.Resources.Box_Arrow : Properties.Resources.Box_Triangle;
+
+            float xPosChoice = 48 - (destBmp.Width == GameData.ScreenWidth ? 0 : GameData.CroppedXPosOffset);
+            float yPosChoice = (NumLines != 3) ? 14 : 20;
+
+            if (NumChoices == 2)
+                yPosChoice += GameData.LinebreakSize;
+
+            yPosChoice += drawYOffs;
+
+            if (MajoraIsBomberNotebook)
+                return destBmp;
+
+            for (int ch = 0; ch < NumChoices; ch++)
+            {
+                Helpers.DrawImage(destBmp, imgArrow, GameData.EndIconColor, (int)(GameData.CharWidth * ScaleX), (int)(GameData.CharHeight * ScaleY), ref xPosChoice, ref yPosChoice, 0);
+                yPosChoice += GameData.LinebreakSize;
+            }
+
+            return destBmp;
+        }
+
+        private void GetDrawOffsMajora(Bitmap destBmp, out float drawXOffs, out float drawYOffs)
+        {
+            if (MajoraIsBomberNotebook)
+            {
+                drawXOffs = (destBmp.Width == GameData.ScreenWidth * 2 ? 0 : GameData.CroppedXPosOffset);
+                drawYOffs = GetTextboxYPosition(destBmp.Height == GameData.ScreenHeight * 2);
+            }
+            else
+            {
+                drawXOffs = (destBmp.Width == GameData.ScreenWidth ? 0 : GameData.CroppedXPosOffset);
+                drawYOffs = GetTextboxYPosition(destBmp.Height == GameData.ScreenHeight);
             }
         }
 
@@ -486,8 +520,8 @@ namespace ZeldaMsgPreview
             int curLine = 0;
 
             float curTextPosX = StartPosX + MajoraCenteringOffset[curLine];
-            float drawXOffs = (destBmp.Width == GameData.ScreenWidth ? 0 : GameData.CroppedXPosOffset);
-            float drawYOffs = GetTextboxYPosition(destBmp.Height == GameData.ScreenHeight);
+            GetDrawOffsMajora(destBmp, out float drawXOffs, out float drawYOffs);
+
             float drawStartTextPosY = StartPosY + drawYOffs;
             float curTextPosY = drawStartTextPosY;
             float curScaleX = ScaleX;
@@ -496,7 +530,7 @@ namespace ZeldaMsgPreview
             Color curColor = MajoraFinalColor == null ? (Color)GetMajoraColor((byte)MajoraControlCode.COLOR_DEFAULT) : (Color)MajoraFinalColor;
             MajoraControlCode? FixedWithEndType = null;
 
-            DrawMajoraIcon(destBmp, StartPosX, drawYOffs, ref curTextPosX);
+            DrawMajoraIcon(destBmp, ref curTextPosX);
 
             for (int i = 0; i < DecodedData.Count; i++)
             {
@@ -530,7 +564,7 @@ namespace ZeldaMsgPreview
                             else
                                 curTextPosX = 2000;     // Actual game starts reading OoB...
 
-                            if (Icon != (byte)MajoraIcon.NO_ICON)
+                            if (NumChoices == 1)
                                 curTextPosX += MajoraIsBomberNotebook ? 50 : 16;
                             else if (NumChoices == 2 && (NumLines != 3 || curLine >= 2))
                                 curTextPosX += MajoraIsBomberNotebook ? 57 : 10;
@@ -559,7 +593,9 @@ namespace ZeldaMsgPreview
                     case (byte)MajoraControlCode.FADE_SKIPPABLE:
                     case (byte)MajoraControlCode.END:
                         {
-                            EndingGraphic = EndingGraphics.Square;
+                            if (EndingGraphic == EndingGraphics.None)
+                                EndingGraphic = EndingGraphics.Square;
+
                             return destBmp;
                         }
                     case (byte)MajoraControlCode.SOUND:
@@ -578,7 +614,7 @@ namespace ZeldaMsgPreview
                             Bitmap left = Properties.Resources.xmes_left;
                             Bitmap right = Properties.Resources.xmes_right;
 
-                            curTextPosX = 45;
+                            curTextPosX = 45 - drawXOffs;
 
                             float xPosBg = curTextPosX;
                             float yPosBg = drawYOffs + 8;
@@ -597,21 +633,7 @@ namespace ZeldaMsgPreview
                     case (byte)MajoraControlCode.TWO_CHOICES:
                     case (byte)MajoraControlCode.THREE_CHOICES:
                         {
-                            Bitmap imgArrow = Properties.Resources.Box_Arrow;
-                            float xPosChoice = 48 - (destBmp.Width == GameData.ScreenWidth ? 0 : GameData.CroppedXPosOffset);
-                            float yPosChoice = (NumLines != 3) ? 14 : 20;
-
-                            if (curChar == (byte)MajoraControlCode.TWO_CHOICES)
-                                yPosChoice += GameData.LinebreakSize;
-
-                            yPosChoice += drawYOffs;
-                            
-                            for (int ch = 0; ch < NumChoices; ch++)
-                            {
-                                Helpers.DrawImage(destBmp, imgArrow, Color.LimeGreen, (int)(GameData.CharWidth * ScaleX), (int)(GameData.CharHeight * ScaleY), ref xPosChoice, ref yPosChoice, 0);
-                                yPosChoice += GameData.LinebreakSize;
-                            }
-
+                            EndingGraphic = EndingGraphics.Choice;
                             break;
                         }
                     case (byte)MajoraControlCode.BANK_PROMPT:
@@ -631,7 +653,9 @@ namespace ZeldaMsgPreview
                     case (byte)MajoraControlCode.CONTINUE:
                     case (byte)MajoraControlCode.EVENT_END:
                         {
-                            EndingGraphic = EndingGraphics.Triangle;
+                            if (EndingGraphic == EndingGraphics.None)
+                                EndingGraphic = EndingGraphics.Triangle;
+
                             return destBmp;
                         }
                     default:
@@ -680,7 +704,7 @@ namespace ZeldaMsgPreview
                 else
                 {
                     posX += UseRealSpaceWidth
-                        ? Message.GetCharacterWidth(0, MajoraIsBomberNotebook, scaleX)
+                        ? Message.GetCharacterWidth((byte)' ', MajoraIsBomberNotebook, scaleX)
                         : 6.0f;
                 }
 
@@ -719,7 +743,7 @@ namespace ZeldaMsgPreview
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
 
                 // Draw shadow
-                if (Type != TextboxType.None_Black && Type != TextboxType.Majora_Bombers_Notebook)
+                if (Type != TextboxType.None_Black && Type != TextboxType.Majora_Bombers_Notebook && !MajoraIsBomberNotebook)
                 {
                     shadowBmp = Helpers.Colorize(shadowBmp, Color.Black);
                     shadowBmp.SetResolution(g.DpiX, g.DpiY);
@@ -736,7 +760,7 @@ namespace ZeldaMsgPreview
                 if (fixedWidth >= 0)
                     posX += (int)(fixedWidth * scaleX);
                 else
-                    posX += (int)Message.GetCharacterWidth((byte)(character - 0x20), MajoraIsBomberNotebook, scaleX);
+                    posX += (int)Message.GetCharacterWidth((byte)character, MajoraIsBomberNotebook, scaleX);
             }
             catch
             {
@@ -847,7 +871,12 @@ namespace ZeldaMsgPreview
                         Textboxes[i + 1].MajoraFinalColor = Textboxes[i].MajoraFinalColor;
 
                     if (temp != null)
+                    {
+                        if (i == Textboxes.Count - 1)
+                            temp = Textboxes[i].DrawChoiceMajora(temp);
+
                         g.DrawImage(temp, 0, temp.Height * i);
+                    }
                 }
             }
 
@@ -1044,13 +1073,14 @@ namespace ZeldaMsgPreview
         public static int GetCharacterWidth(byte c, bool UseRealSpaceWidth, float ScaleX)
         {
             int width = 0;
+            int index = c - ' ';
 
-            if (!UseRealSpaceWidth && c == 0)
+            if (!UseRealSpaceWidth && index == 0)
                 width += GameData.SpaceWidth;
             else
             {
-                if (GameData.FontWidths.Length > c)
-                    width += (int)(GameData.FontWidths[c] * ScaleX);
+                if (GameData.FontWidths.Length > index)
+                    width += (int)(GameData.FontWidths[index] * ScaleX);
                 else
                     width += (int)(GameData.CharWidth * ScaleX);
             }
@@ -1079,6 +1109,51 @@ namespace ZeldaMsgPreview
                 curLineWidth += GetStringPxLength(str, IsBomberNotebook, CurTextbox.ScaleX);
         }
 
+        public static int GetMajoraItemIdFromIcon(int Icon)
+        {
+            int ItemID = (int)ItemId.MESSAGE_ITEM_NONE;
+
+            if (Enum.IsDefined(typeof(MajoraIcon), Icon))
+                if (GameData.IconToItem.ContainsKey(Icon))
+                    ItemID = (int)GameData.IconToItem[Icon];
+
+            return ItemID;
+        }
+
+        private void SetIconPositionMajora(Textbox Textbox, int xBase, int yBase)
+        {
+            int ItemID = GetMajoraItemIdFromIcon(Textbox.Icon);
+
+            if (ItemID == (int)ItemId.ITEM_RECOVERY_HEART ||
+                (ItemID >= (int)ItemId.ITEM_RUPEE_GREEN && ItemID <= (int)ItemId.ITEM_RUPEE_HUGE))
+            {
+                Textbox.MajoraIconPosX = xBase - 22;
+                Textbox.MajoraIconPosY = yBase + 10;
+            }
+            else if (ItemID == (int)ItemId.ITEM_STRAY_FAIRIES)
+            {
+                Textbox.MajoraIconPosX = xBase - 18;
+                Textbox.MajoraIconPosY = yBase + 10;
+            }
+            else if (ItemID == (int)ItemId.ITEM_BOMBERS_NOTEBOOK || ItemID <= (int)ItemId.ITEM_REMAINS_TWINMOLD)
+            {
+                Textbox.MajoraIconPosX = xBase - 18;
+                Textbox.MajoraIconPosY = yBase + 6;
+            }
+            else if (ItemID == (int)ItemId.ITEM_CC || ItemID >= (int)ItemId.ITEM_B8)
+            {
+                Textbox.MajoraIconPosX = xBase - 18;
+                Textbox.MajoraIconPosY = yBase + 8;
+            }
+            else if (ItemID >= (int)ItemId.ITEM_SKULL_TOKEN)
+            {
+                Textbox.MajoraIconPosX = xBase - 14;
+                Textbox.MajoraIconPosY = yBase + 10;
+            }
+
+            if (Textbox.MajoraIsBomberNotebook)
+                Textbox.MajoraIconPosX = (int)(Textbox.MajoraIconPosX * GameData.TextScaleBombers) + 2;
+        }
 
         private void DecodeMajora()
         {
@@ -1101,9 +1176,18 @@ namespace ZeldaMsgPreview
                 bool MajoraDrawInstantly = (settings & 0x3) == 3;
 
                 byte Icon = Data[i++];
+                int NumChoices = 0;
+                bool GlitchOutIcon = false;
 
-                if (Icon >= 0xC8 && Icon < 0xD8)
-                    Icon = (byte)MajoraIcon.NO_ICON;
+                if (Icon != (byte)MajoraIcon.NO_ICON)
+                {
+                    MajoraTextCenter = false;
+                    if (Icon >= 0xC8 && Icon < 0xD8)
+                        Icon = (byte)MajoraIcon.NO_ICON;
+                }
+
+                if (Icon != (byte)MajoraIcon.NO_ICON)
+                    NumChoices = 1;
 
                 short MajoraNextMessage = (short)((Data[i++] << 8) | Data[i++]);
                 short MajoraFirstItemPrice = (short)((Data[i++] << 8) | Data[i++]);
@@ -1120,6 +1204,7 @@ namespace ZeldaMsgPreview
                     MajoraSecondPrice = MajoraSecondItemPrice,
                     MajoraBoxCenter = MajoraTextCenter,
                     Icon = Icon,
+                    NumChoices = NumChoices,
                     MajoraIsBomberNotebook = IsBomberNotebook,
                     ScaleX = IsBomberNotebook ? GameData.TextScaleBombers : GameData.TextScaleDefault,
                     ScaleY = IsBomberNotebook ? GameData.TextScaleBombers : GameData.TextScaleDefault,
@@ -1145,17 +1230,25 @@ namespace ZeldaMsgPreview
                         case (byte)MajoraControlCode.CONTINUE:
                         case (byte)MajoraControlCode.PERSISTENT:
                             {
+                                CurTextbox.NumChoices = NumChoices;
                                 CurTextbox.IsCredits = IsCredits;
                                 CurTextbox.StartPosX = IsBomberNotebook ? GameData.MajoraTextXPosBombers : GameData.TextXPosDefault;
+
+                                if (!GlitchOutIcon)
+                                    SetIconPositionMajora(CurTextbox, CurTextbox.StartPosX, CurTextbox.StartPosY + 10);
+
+                                if (CurTextbox.NumChoices == 3)
+                                    CurTextbox.StartPosX += 22;
 
                                 if (curLine < 4)
                                 {
                                     CurTextbox.MajoraCenteringOffset[curLine] = 0;
 
-                                    if (CurTextbox.MajoraBoxCenter)
+                                    if (MajoraTextCenter)
                                         CurTextbox.MajoraCenteringOffset[curLine] = (int)(((CurTextbox.ScaleX * 16.0f * 16.0f) - curLineWidth) / 2);
                                 }
 
+                                curLine = 0;
                                 curLineWidth = 0;
 
                                 CurTextbox.StartPosY = CurTextbox.Type == TextboxType.Ocarina ? GameData.TextYPosMajoraOcarinaTextbox : GameData.TextYPosDefault;
@@ -1215,6 +1308,7 @@ namespace ZeldaMsgPreview
                                     MajoraBoxCenter = MajoraTextCenter,
                                     MajoraIsBomberNotebook = IsBomberNotebook,
                                     Icon = Icon,
+                                    NumChoices = NumChoices,
                                     ScaleX = IsBomberNotebook ? GameData.TextScaleBombers : GameData.TextScaleDefault,
                                     ScaleY = IsBomberNotebook ? GameData.TextScaleBombers : GameData.TextScaleDefault,
                                 };
@@ -1335,14 +1429,13 @@ namespace ZeldaMsgPreview
 
                         case (byte)MajoraControlCode.BACKGROUND:
                             {
-                                curLine = 2;
-
                                 // Causes the icon to glitch out.
-                                CurTextbox.Icon = (byte)MajoraIcon.NO_ICON;
-                                Icon = (byte)MajoraIcon.NO_ICON;
+                                GlitchOutIcon = true;
 
+                                CurTextbox.MajoraBoxCenter = true;
                                 MajoraTextCenter = true;
-                                
+
+                                curLine = 2;
                                 CurTextbox.NumLines = 2;
                                 CurTextbox.DecodedData.Add(curChar);
                                 break;
@@ -1350,14 +1443,14 @@ namespace ZeldaMsgPreview
                         case (byte)MajoraControlCode.TWO_CHOICES:
                             {
                                 CurTextbox.MajoraBoxCenter = false;
-                                CurTextbox.NumChoices = 2;
+                                NumChoices = 2;
                                 CurTextbox.DecodedData.Add(curChar);
                                 break;
                             }
                         case (byte)MajoraControlCode.THREE_CHOICES:
                             {
                                 CurTextbox.MajoraBoxCenter = false;
-                                CurTextbox.NumChoices = 3;
+                                NumChoices = 3;
                                 CurTextbox.DecodedData.Add(curChar);
                                 break;
                             }
@@ -1371,7 +1464,7 @@ namespace ZeldaMsgPreview
                                 {
                                     CurTextbox.MajoraCenteringOffset[curLine] = 0;
 
-                                    if (CurTextbox.MajoraBoxCenter)
+                                    if (MajoraTextCenter)
                                         CurTextbox.MajoraCenteringOffset[curLine] = (int)(((CurTextbox.ScaleX * 16.0f * 16.0f) - curLineWidth) / 2);
                                 }
 
@@ -1404,6 +1497,19 @@ namespace ZeldaMsgPreview
                                 CurTextbox.DecodedData.Add(Data[++i]);
                                 break;
                             }
+                        case (byte)MajoraControlCode.COLOR_DEFAULT:
+                        case (byte)MajoraControlCode.COLOR_RED:
+                        case (byte)MajoraControlCode.COLOR_GREEN:
+                        case (byte)MajoraControlCode.COLOR_BLUE:
+                        case (byte)MajoraControlCode.COLOR_YELLOW:
+                        case (byte)MajoraControlCode.COLOR_NAVY:
+                        case (byte)MajoraControlCode.COLOR_PINK:
+                        case (byte)MajoraControlCode.COLOR_SILVER:
+                        case (byte)MajoraControlCode.COLOR_ORANGE:
+                            {
+                                CurTextbox.DecodedData.Add(curChar);
+                                break;
+                            }
                         default:
                             {
                                 CurTextbox.DecodedData.Add(curChar);
@@ -1414,7 +1520,7 @@ namespace ZeldaMsgPreview
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 Textboxes = null;
             }
