@@ -36,7 +36,8 @@ namespace ZeldaMsgPreview
     public enum Game
     {
         Ocarina = 0,
-        Majora = 1,
+        Ocarina_Debug = 1,
+        Majora = 2,
     }
 
     public enum OcarinaControlCode
@@ -281,6 +282,132 @@ namespace ZeldaMsgPreview
         TRIANGLE = 0xBA,
         CONTROL_STICK = 0xBB,
         D_PAD = 0xBC
+    }
+
+    public enum OcarinaIcon
+    {
+        DEKU_STICK,
+        DEKU_NUT,
+        BOMBS,
+        BOW,
+        FIRE_ARROWS,
+        DINS_FIRE,
+        SLINGSHOT,
+        FAIRY_OCARINA,
+        OCARINA_OF_TIME,
+        BOMBCHUS,
+        HOOKSHOT,
+        LONGSHOT,
+        ICE_ARROWS,
+        FARORES_WIND,
+        BOOMERANG,
+        LENS_OF_TRUTH,
+        BEANS,
+        MEGATON_HAMMER,
+        LIGHT_ARROWS,
+        NAYRUS_LOVE,
+        EMPTY_BOTTLE,
+        RED_POTION,
+        GREEN_POTION,
+        BLUE_POTION,
+        FAIRY,
+        FISH,
+        MILK,
+        RUTOS_LETTER,
+        BLUE_FIRE,
+        BOTTLE_BUG,
+        BOTTLE_POE,
+        HALF_MILK,
+        BOTTLE_BIGPOE,
+        WEIRD_EGG,
+        CHICKEN,
+        ZELDAS_LETTER,
+        KEATON_MASK,
+        SKULL_MASK,
+        SPOOKY_MASK,
+        BUNNY_HOOD,
+        GORON_MASK,
+        ZORA_MASK,
+        GERUDO_MASK,
+        MASK_OF_TRUTH,
+        SOLD_OUT,
+        POCKET_EGG,
+        POCKET_CUCCO,
+        COJIRO,
+        ODD_MUSHROOM,
+        ODD_POTION,
+        POACHERS_SAW,
+        BROKEN_SWORD,
+        PRESCRIPTION,
+        EYEBALL_FROG,
+        EYEDROPS,
+        CLAIM_CHECK,
+        BOW_FIRE,
+        BOW_ICE,
+        BOW_LIGHT,
+        KOKIRI_SWORD,
+        MASTER_SWORD,
+        BIGGORON_SWORD,
+        DEKU_SHIELD,
+        HYLIAN_SHIELD,
+        MIRROR_SHIELD,
+        KOKIRI_TUNIC,
+        GORON_TUNIC,
+        ZORA_TUNIC,
+        BOOTS,
+        IRON_BOOTS,
+        HOVER_BOOTS,
+        BULLET_BAG,
+        BIGGER_BULLET_BAG,
+        BIGGEST_BULLET_BAG,
+        QUIVER,
+        BIG_QUIVER,
+        BIGGEST_QUIVER,
+        BOMB_BAG,
+        BIGGER_BOMB_BAG,
+        BIGGEST_BOMB_BAG,
+        GORON_BRACELET,
+        SILVER_GAUNTLETS,
+        GOLDEN_GAUNTLETS,
+        ZORA_SCALE,
+        GOLDEN_SCALE,
+        BROKEN_KNIFE,
+        ADULTS_WALLET,
+        GIANTS_WALLET,
+        DEKU_SEEDS,
+        FISHING_ROD,
+        NOTHING_1,
+        NOTHING_2,
+        NOTHING_3,
+        NOTHING_4,
+        NOTHING_5,
+        NOTHING_6,
+        NOTHING_7,
+        NOTHING_9,
+        NOTHING_10,
+        NOTHING_11,
+        NOTHING_12,
+        NOTHING_13,
+        FOREST_MEDALLION,
+        FIRE_MEDALLION,
+        WATER_MEDALLION,
+        SPIRIT_MEDALLION,
+        SHADOW_MEDALLION,
+        LIGHT_MEDALLION,
+        KOKIRI_EMERALD,
+        GORON_RUBY,
+        ZORA_SAPPHIRE,
+        STONE_OF_AGONY,
+        GERUDO_PASS,
+        GOLDEN_SKULLTULA,
+        HEART_CONTAINER,
+        HEART_PIECE,
+        BOSS_KEY,
+        COMPASS,
+        DUNGEON_MAP,
+        SMALL_KEY,
+        MAGIC_JAR,
+        BIG_MAGIC_JAR,
     }
 
     public enum MajoraIcon
@@ -863,20 +990,30 @@ namespace ZeldaMsgPreview
         MESSAGE_ITEM_NONE = 9999
     }
 
-
-    
-
     public enum OcarinaMsgColor
     {
-        DEFAULT = 0x40,
-        RED = 0x41,
-        GREEN = 0x42,
-        BLUE = 0x43,
-        CYAN = 0x44,
-        MAGENTA = 0x45,
-        YELLOW = 0x46,
-        BLACK = 0x47
+        D = 0x40,
+        R = 0x41,
+        G = 0x42,
+        B = 0x43,
+        C = 0x44,
+        M = 0x45,
+        Y = 0x46,
+        BLK = 0x47
     };
+
+    public enum MajoraMsgColor
+    {
+        D = 0x00,
+        R = 0x01,
+        G = 0x02,
+        B = 0x03,
+        Y = 0x04,
+        N = 0x05,
+        P = 0x06,
+        S = 0x07,
+        O = 0x08,
+    }
 
     public enum OcarinaHighScore
     {
@@ -895,6 +1032,20 @@ namespace ZeldaMsgPreview
         Triangle,
         Square,
         Choice
+    }
+
+    public enum EndStyles
+    {
+        None,
+        Choice,
+        Prompt_Bombers,
+        Prompt_Race,
+        Prompt_Bank,
+        Prompt_Lottery,
+        Prompt_Pause,
+        Persistent,
+        Event,
+        Fade,
     }
 
 }
