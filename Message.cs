@@ -301,14 +301,14 @@ namespace ZeldaMsgPreview
             }
         }
 
-        public Bitmap DrawChoiceMajora(Bitmap destBmp)
+        public Bitmap DrawChoiceMajora(Bitmap destBmp, int yOffs)
         {
-            if (NumChoices < 2 || EndStyle != EndStyles.Choice)
+            if (NumChoices < 2)
                 return destBmp;
 
             GetDrawOffsMajora(destBmp, out float drawXOffs, out float drawYOffs);
 
-            Bitmap imgArrow = EndingGraphic == EndingGraphics.Choice ? Properties.Resources.Box_Arrow : Properties.Resources.Box_Triangle;
+            Bitmap imgArrow = Properties.Resources.Box_Arrow;
 
             float xPosChoice = 48 - (destBmp.Width == GameData.ScreenWidth ? 0 : GameData.CroppedXPosOffset);
             float yPosChoice = (NumLines != 3) ? 14 : 20;
@@ -317,6 +317,7 @@ namespace ZeldaMsgPreview
                 yPosChoice += GameData.LinebreakSize;
 
             yPosChoice += drawYOffs;
+            yPosChoice += yOffs;
 
             if (MajoraIsBomberNotebook)
                 return destBmp;
@@ -597,6 +598,7 @@ namespace ZeldaMsgPreview
                     case (byte)MajoraControlCode.FADE:
                     case (byte)MajoraControlCode.FADE_SKIPPABLE:
                         {
+                            EndingGraphic = EndingGraphics.None;
                             EndStyle = EndStyles.Fade;
                             return destBmp;
                         }
@@ -928,13 +930,10 @@ namespace ZeldaMsgPreview
                         if (temp != null)
                             g.DrawImage(temp, 0, temp.Height * i);
                     }
-
-                    Bitmap lastChoicePreview = Textboxes[Textboxes.Count - 1].DrawChoiceMajora(null);
-
-                    if (lastChoicePreview != null)
-                        g.DrawImage(lastChoicePreview, 0, bmpOut.Height - lastChoicePreview.Height);
                 }
             }
+
+            bmpOut = Textboxes[Textboxes.Count - 1].DrawChoiceMajora(bmpOut, bmpOut.Height - bmpOut.Height / Textboxes.Count);
 
             return bmpOut;
         }
