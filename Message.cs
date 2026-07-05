@@ -892,7 +892,7 @@ namespace ZeldaMsgPreview
         }
 
         public Message(Game _TargetGame, byte[] _Data, TextboxPosition _TextboxPosition = TextboxPosition.Dynamic, TextboxType _OcarinaTextboxType = TextboxType.Black,
-                       byte[] Font = null, float[] Widths = null,
+                       byte[] Font = null, float[] Widths = null, byte[] Font2 = null, float[] Widths2 = null,
                        bool _IsCredits = false, bool _UseRealSpaceWidth = false, bool _IsBomberNotebook = false)
         {
             TargetGame = _TargetGame;
@@ -904,21 +904,25 @@ namespace ZeldaMsgPreview
             IsBomberNotebook = _IsBomberNotebook;
 
             if (Font != null)
-            {
                 GameData.FontData = Font;
-            }
+
+            if (Font2 != null)
+                GameData.FontData2 = Font2;
 
             if (Widths != null)
-            {
                 GameData.FontWidths = Widths;
-            }
             else
                 SetFontWidths();
+
+            if (Widths2 != null)
+                GameData.FontWidths2 = Widths;
+            else
+                SetFontWidths2();
 
             Decode();
         }
 
-        public void SetFontWidths(byte[] widths = null)
+        private void SetFontWidths(byte[] widths = null)
         {
             if (widths == null)
             {
@@ -926,6 +930,17 @@ namespace ZeldaMsgPreview
                     GameData.FontWidths = GameData.OcarinaFontWidths;
                 else
                     GameData.FontWidths = GameData.MajoraFontWidths;
+            }
+        }
+
+        private void SetFontWidths2(byte[] widths = null)
+        {
+            if (widths == null)
+            {
+                if (TargetGame <= Game.Ocarina_Debug)
+                    GameData.FontWidths2 = GameData.OcarinaFontWidths;
+                else
+                    GameData.FontWidths2 = GameData.MajoraFontWidths;
             }
         }
 
@@ -968,7 +983,8 @@ namespace ZeldaMsgPreview
                 bmpOut = combined;
             }
 
-            bmpOut = Textboxes[^1].DrawChoiceMajora(bmpOut,bmpOut.Height - bmpOut.Height / Textboxes.Count);
+            if (bmpOut != null)
+                bmpOut = Textboxes[^1].DrawChoiceMajora(bmpOut, bmpOut.Height - bmpOut.Height / Textboxes.Count);
 
             return bmpOut;
         }

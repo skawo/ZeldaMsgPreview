@@ -170,7 +170,11 @@ namespace ZeldaMsgPreview
 
         public static byte[] FontData = null;
 
+        public static byte[] FontData2 = null;
+
         public static float[] FontWidths;
+
+        public static float[] FontWidths2;
 
         public static float[] OcarinaFontWidths =
         {
