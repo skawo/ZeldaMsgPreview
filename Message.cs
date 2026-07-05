@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
+using SkiaSharp;
 
 namespace ZeldaMsgPreview
 {
@@ -39,7 +38,7 @@ namespace ZeldaMsgPreview
         public bool UseRealSpaceWidth { get; set; }
         public int MajoraPromptIndex { get; set; }
         public EndStyles EndStyle { get; set; }
-        public Color? MajoraColor { get; set; }
+        public SKColor? MajoraColor { get; set; }
         public bool IsLastMsg { get; set; }
 
         public Textbox()
@@ -80,7 +79,7 @@ namespace ZeldaMsgPreview
         }
 
 
-        private Bitmap GetBaseImage(bool FullScreenForce)
+        private SKBitmap GetBaseImage(bool FullScreenForce)
         {
             int OutputX = GameData.ScreenWidth;
             int OutputY = GameData.ScreenHeight;
@@ -104,41 +103,52 @@ namespace ZeldaMsgPreview
                 OutputY = GameData.TextboxHeight + 8;
             }
 
-            Bitmap bmp = new Bitmap(OutputX, OutputY);
+            var info = new SKImageInfo(OutputX, OutputY, SKColorType.Rgba8888, SKAlphaType.Unpremul);
+            SKBitmap bmp = new SKBitmap(info);
 
-            using (var g = Graphics.FromImage(bmp))
+            if ((Type == TextboxType.None_White || IsCredits || FullScreenForce) && (Type != TextboxType.None_Black))
             {
-                if ((Type == TextboxType.None_White || IsCredits || FullScreenForce) && (Type != TextboxType.None_Black))
-                    g.FillRectangle(Brushes.Black, 0, 0, OutputX, OutputY);
-                else
-                    bmp.MakeTransparent();
+                using (var canvas = new SKCanvas(bmp))
+                {
+                    using (var paint = new SKPaint { Color = SKColors.Black, Style = SKPaintStyle.Fill })
+                    {
+                        canvas.DrawRect(new SKRect(0, 0, OutputX, OutputY), paint);
+                    }
+                }
             }
 
             return bmp;
         }
 
-        private Bitmap DrawBox(Bitmap destBmp)
+        private SKBitmap DrawBox(SKBitmap destBmp)
         {
-            Bitmap tboxImage = null;
-            Color colorizeColor = Color.White;
+            SKBitmap tboxImage = null;
+            SKColor colorizeColor = SKColors.White;
             bool reverseAlpha = false;
+
+            // SKPaint.FilterQuality / SKFilterQuality are obsolete; SKCanvas.DrawBitmap has no
+            // SKSamplingOptions overload, so drawing goes through DrawImage(SKImage, ...) instead.
+            var sampling = new SKSamplingOptions(SKCubicResampler.Mitchell);
 
             if (MajoraIsBomberNotebook)
             {
-                colorizeColor = Color.White;
-                tboxImage = Properties.Resources.Box_Default;
+                colorizeColor = SKColors.White;
+                tboxImage = Resources.Box_Default;
                 tboxImage = Helpers.ReverseAlphaMask(tboxImage);
                 tboxImage = Helpers.Colorize(tboxImage, colorizeColor);
 
-                using (Graphics g = Graphics.FromImage(destBmp))
+                using (var canvas = new SKCanvas(destBmp))
                 {
                     int posX = (destBmp.Width == GameData.ScreenWidth * 2 ? GameData.TextboxXPosition : 0);
                     int yPos = GetTextboxYPosition(destBmp.Height == GameData.ScreenHeight * 2);
 
-                    tboxImage.SetResolution(g.DpiX, g.DpiY);
-                    g.DrawImage(tboxImage, new Rectangle(posX, yPos, destBmp.Width / 2, destBmp.Height));
-                    tboxImage = Helpers.FlipBitmapX_MonoSafe(tboxImage);
-                    g.DrawImage(tboxImage, new Rectangle(posX + destBmp.Width / 2, yPos, destBmp.Width / 2, destBmp.Height));
+                    using (var image = SKImage.FromBitmap(tboxImage))
+                        canvas.DrawImage(image, new SKRect(posX, yPos, posX + destBmp.Width / 2, yPos + destBmp.Height), sampling);
+
+                    tboxImage = Helpers.FlipBitmapX(tboxImage);
+
+                    using (var image = SKImage.FromBitmap(tboxImage))
+                        canvas.DrawImage(image, new SKRect(posX + destBmp.Width / 2, yPos, posX + destBmp.Width, yPos + destBmp.Height), sampling);
                 }
 
                 return destBmp;
@@ -149,45 +159,45 @@ namespace ZeldaMsgPreview
                 case TextboxType.Black:
                 case TextboxType.Majora_Black2:
                     {
-                        tboxImage = Properties.Resources.Box_Default;
-                        colorizeColor = Color.FromArgb(170, 0, 0, 0);
+                        tboxImage = Resources.Box_Default;
+                        colorizeColor = new SKColor(0, 0, 0, 170);
                         reverseAlpha = true;
                         break;
                     }
                 case TextboxType.Ocarina:
                     {
-                        tboxImage = Properties.Resources.Box_Staff;
-                        colorizeColor = Color.FromArgb(180, 255, 0, 0);
+                        tboxImage = Resources.Box_Staff;
+                        colorizeColor = new SKColor(255, 0, 0, 180);
                         reverseAlpha = false;
                         break;
                     }
                 case TextboxType.Wooden:
                     {
-                        tboxImage = Properties.Resources.Box_Wooden;
-                        colorizeColor = Color.FromArgb(230, 70, 50, 30);
+                        tboxImage = Resources.Box_Wooden;
+                        colorizeColor = new SKColor(70, 50, 30, 230);
                         reverseAlpha = false;
                         break;
                     }
                 case TextboxType.Blue:
                 case TextboxType.Majora_Blue2:
                     {
-                        tboxImage = Properties.Resources.Box_Blue;
-                        colorizeColor = Color.FromArgb(170, 0, 10, 50);
+                        tboxImage = Resources.Box_Blue;
+                        colorizeColor = new SKColor(0, 10, 50, 170);
                         reverseAlpha = true;
                         break;
                     }
                 case TextboxType.Majora_Bombers_Notebook:
                     {
-                        tboxImage = Properties.Resources.majora_Box_Bomber;
-                        colorizeColor = Color.FromArgb(170, 250, 253, 213);
+                        tboxImage = Resources.majora_Box_Bomber;
+                        colorizeColor = new SKColor(250, 253, 213, 170);
                         reverseAlpha = true;
                         break;
                     }
                 case TextboxType.Majora_Red:
                 case TextboxType.Majora_Red2:
                     {
-                        tboxImage = Properties.Resources.Box_Default;
-                        colorizeColor = Color.FromArgb(170, 255, 0, 0);
+                        tboxImage = Resources.Box_Default;
+                        colorizeColor = new SKColor(255, 0, 0, 170);
                         reverseAlpha = true;
                         break;
                     }
@@ -216,27 +226,31 @@ namespace ZeldaMsgPreview
             return posY;
         }
 
-        private Bitmap DrawBoxInternal(Bitmap destBmp, Bitmap srcBmp, Color cl, bool revAlpha = true)
+        private SKBitmap DrawBoxInternal(SKBitmap destBmp, SKBitmap srcBmp, SKColor cl, bool revAlpha = true)
         {
             if (revAlpha)
                 srcBmp = Helpers.ReverseAlphaMask(srcBmp);
 
             srcBmp = Helpers.Colorize(srcBmp, cl);
 
-            using (Graphics g = Graphics.FromImage(destBmp))
-            {
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
+            var sampling = new SKSamplingOptions(SKFilterMode.Nearest);
 
-                int posY = GetTextboxYPosition(destBmp.Height == GameData.ScreenHeight);
-                int posX = (destBmp.Width == GameData.ScreenWidth ? GameData.TextboxXPosition : 0);
+            using var canvas = new SKCanvas(destBmp);
 
-                srcBmp.SetResolution(g.DpiX, g.DpiY);
-                g.DrawImage(srcBmp, posX, posY);
+            int posY = GetTextboxYPosition(destBmp.Height == GameData.ScreenHeight);
+            int posX = destBmp.Width == GameData.ScreenWidth ? GameData.TextboxXPosition : 0;
 
-                srcBmp = Helpers.FlipBitmapX_MonoSafe(srcBmp);
+            // Draw the left half.
+            canvas.DrawBitmap(srcBmp, posX, posY, sampling, paint: null);
 
-                g.DrawImage(srcBmp, posX + srcBmp.Width, posY);
-            }
+            // Draw the mirrored right half.
+            canvas.Save();
+
+            // Mirror about the left edge of where the right image should appear.
+            canvas.Translate(2 * (posX + srcBmp.Width), 0);
+            canvas.Scale(-1, 1);
+            canvas.DrawBitmap(srcBmp, posX, posY, sampling, paint: null);
+            canvas.Restore();
 
             return destBmp;
         }
@@ -246,38 +260,38 @@ namespace ZeldaMsgPreview
             return Type == TextboxType.None_Black ? OcarinaMsgColor.BLK : OcarinaMsgColor.D;
         }
 
-        private Color GetMajoraColor(byte chr)
+        private SKColor GetMajoraColor(byte chr)
         {
             return GameData.MajoraMsgRGB[(MajoraControlCode)chr][MajoraIsBomberNotebook ? GameData.MajoraTypeColorIndexes[TextboxType.Majora_Bombers_Notebook] : GameData.MajoraTypeColorIndexes[Type]];
         }
 
-        private Color GetMajoraButtonColor(byte chr)
+        private SKColor GetMajoraButtonColor(byte chr)
         {
             return GameData.MajoraButtonRGB[GameData.MajoraButtonRGBIndexes[(MajoraControlCode)chr]];
         }
 
-        private Bitmap DrawEndMarker(Bitmap destBmp)
+        private SKBitmap DrawEndMarker(SKBitmap destBmp)
         {
             if (!IsCredits && EndingGraphic != EndingGraphics.None && !MajoraIsBomberNotebook)
             {
                 float xPosEnd = GameData.OcarinaEndIconXPos - (destBmp.Width == GameData.ScreenWidth ? 0 : 34);
                 float yPosEnd = GetTextboxEndMarkerPosition(destBmp.Height == GameData.ScreenHeight);
-                Bitmap endIcon = EndingGraphic == EndingGraphics.Square ? Properties.Resources.Box_End : Properties.Resources.Box_Triangle;
-                Helpers.DrawImage(destBmp, endIcon, TargetGame == Game.Ocarina_Debug ? GameData.EndIconColorDebug : GameData.EndIconColor, 
+                SKBitmap endIcon = EndingGraphic == EndingGraphics.Square ? Resources.Box_End : Resources.Box_Triangle;
+                Helpers.DrawImage(destBmp, endIcon, TargetGame == Game.Ocarina_Debug ? GameData.EndIconColorDebug : GameData.EndIconColor,
                                  (int)(GameData.CharWidth * ScaleX), (int)(GameData.CharHeight * ScaleY), ref xPosEnd, ref yPosEnd, 0);
             }
 
             return destBmp;
         }
 
-        private void DrawMajoraIcon(Bitmap destBmp, ref float textXPos)
+        private void DrawMajoraIcon(SKBitmap destBmp, ref float textXPos)
         {
             int ItemID = Message.GetMajoraItemIdFromIcon(Icon);
 
             if (ItemID != (int)ItemId.MESSAGE_ITEM_NONE)
             {
                 string iconResName = $"majora_icon_{Icon.ToString().ToLower()}";
-                Bitmap img = (Bitmap)Properties.Resources.ResourceManager.GetObject(iconResName);
+                SKBitmap img = Resources.TryGetBitmap(iconResName);
 
                 int drawOffsX = (destBmp.Width == GameData.ScreenWidth ? 0 : GameData.CroppedXPosOffset);
                 float x = MajoraIconPosX - drawOffsX;
@@ -289,11 +303,11 @@ namespace ZeldaMsgPreview
                     {
                         drawOffsX = (destBmp.Width == GameData.ScreenWidth ? 0 : GameData.CroppedXPosOffset);
                         x = MajoraIconPosX - drawOffsX;
-                        Helpers.DrawImage(destBmp, img, ItemID == (int)ItemId.ITEM_CC ? Color.Yellow : Color.White,
+                        Helpers.DrawImage(destBmp, img, ItemID == (int)ItemId.ITEM_CC ? SKColors.Yellow : SKColors.White,
                                          (int)(img.Width * GameData.TextScaleBombers), (int)(img.Height * GameData.TextScaleBombers), ref x, ref y, 0, false);
                     }
                     else
-                        Helpers.DrawImage(destBmp, img, ItemID == (int)ItemId.ITEM_CC ? Color.Yellow : Color.White,
+                        Helpers.DrawImage(destBmp, img, ItemID == (int)ItemId.ITEM_CC ? SKColors.Yellow : SKColors.White,
                                           img.Width, img.Height, ref x, ref y, 0, false);
                 }
 
@@ -301,14 +315,14 @@ namespace ZeldaMsgPreview
             }
         }
 
-        public Bitmap DrawChoiceMajora(Bitmap destBmp, int yOffs)
+        public SKBitmap DrawChoiceMajora(SKBitmap destBmp, int yOffs)
         {
             if (NumChoices < 2)
                 return destBmp;
 
             GetDrawOffsMajora(destBmp, out float drawXOffs, out float drawYOffs);
 
-            Bitmap imgArrow = Properties.Resources.Box_Arrow;
+            SKBitmap imgArrow = Resources.Box_Arrow;
 
             float xPosChoice = 48 - (destBmp.Width == GameData.ScreenWidth ? 0 : GameData.CroppedXPosOffset);
             float yPosChoice = (NumLines != 3) ? 14 : 20;
@@ -324,7 +338,7 @@ namespace ZeldaMsgPreview
 
             for (int ch = 0; ch < NumChoices; ch++)
             {
-                Helpers.DrawImage(destBmp, imgArrow, TargetGame == Game.Ocarina_Debug ? GameData.EndIconColorDebug : GameData.EndIconColor, 
+                Helpers.DrawImage(destBmp, imgArrow, TargetGame == Game.Ocarina_Debug ? GameData.EndIconColorDebug : GameData.EndIconColor,
                                  (int)(GameData.CharWidth * ScaleX), (int)(GameData.CharHeight * ScaleY), ref xPosChoice, ref yPosChoice, 0);
                 yPosChoice += GameData.LinebreakSize;
             }
@@ -332,7 +346,7 @@ namespace ZeldaMsgPreview
             return destBmp;
         }
 
-        private void GetDrawOffsMajora(Bitmap destBmp, out float drawXOffs, out float drawYOffs)
+        private void GetDrawOffsMajora(SKBitmap destBmp, out float drawXOffs, out float drawYOffs)
         {
             if (MajoraIsBomberNotebook)
             {
@@ -347,13 +361,13 @@ namespace ZeldaMsgPreview
         }
 
 
-        private Bitmap DrawText(Bitmap destBmp, bool brightenText)
+        private SKBitmap DrawText(SKBitmap destBmp, bool brightenText)
         {
             return TargetGame <= Game.Ocarina_Debug ? DrawText_Ocarina(destBmp, brightenText) :
                                                       DrawText_Majora(destBmp, brightenText);
         }
 
-        private Bitmap DrawText_Ocarina(Bitmap destBmp, bool brightenText)
+        private SKBitmap DrawText_Ocarina(SKBitmap destBmp, bool brightenText)
         {
             float curTextPosX = StartPosX;
             float drawXOffs = (destBmp.Width == GameData.ScreenWidth ? 0 : GameData.CroppedXPosOffset);
@@ -396,7 +410,7 @@ namespace ZeldaMsgPreview
                             byte IconN = Helpers.GetByteFromList(DecodedData, ++i);
 
                             string iconResName = $"icon_{IconN.ToString().ToLower()}";
-                            Bitmap img = (Bitmap)Properties.Resources.ResourceManager.GetObject(iconResName);
+                            SKBitmap img = Resources.TryGetBitmap(iconResName);
 
                             if (img != null)
                             {
@@ -404,13 +418,13 @@ namespace ZeldaMsgPreview
                                 {
                                     float xPosIcon = curTextPosX + StartPosX + drawXOffs - 74;
                                     float yPosIcon = drawYOffs + 16;
-                                    Helpers.DrawImage(destBmp, img, Color.White, 32, 32, ref xPosIcon, ref yPosIcon, 32, false);
+                                    Helpers.DrawImage(destBmp, img, SKColors.White, 32, 32, ref xPosIcon, ref yPosIcon, 32, false);
                                 }
                                 else
                                 {
                                     float xPosIcon = curTextPosX + StartPosX + drawXOffs - 72;
                                     float yPosIcon = drawYOffs + 20;
-                                    Helpers.DrawImage(destBmp, img, Color.White, 24, 24, ref xPosIcon, ref yPosIcon, 32, false);
+                                    Helpers.DrawImage(destBmp, img, SKColors.White, 24, 24, ref xPosIcon, ref yPosIcon, 32, false);
                                 }
                             }
 
@@ -421,8 +435,8 @@ namespace ZeldaMsgPreview
                     case (byte)OcarinaControlCode.BACKGROUND:
                         {
                             // There is only one message background, despite what the OoT code might indicate...
-                            Bitmap left = Properties.Resources.xmes_left;
-                            Bitmap right = Properties.Resources.xmes_right;
+                            SKBitmap left = Resources.xmes_left;
+                            SKBitmap right = Resources.xmes_right;
 
                             float xPosBg = curTextPosX;
                             float yPosBg = drawYOffs + 8;
@@ -432,12 +446,12 @@ namespace ZeldaMsgPreview
                             if (BgYPosOffsetId > 0 && BgYPosOffsetId < GameData.OcarinaTextboxBackgroundShadowOffsets.Length)
                                 yPosBg += GameData.OcarinaTextboxBackgroundShadowOffsets[BgYPosOffsetId];
 
-                            Color BackColor = GameData.OcarinaTextboxBackgroundBackPrimColors[0];
+                            SKColor BackColor = GameData.OcarinaTextboxBackgroundBackPrimColors[0];
 
                             if (BgBackColorId > 0 && BgBackColorId < GameData.OcarinaTextboxBackgroundBackPrimColors.Length)
                                 BackColor = GameData.OcarinaTextboxBackgroundBackPrimColors[BgBackColorId];
 
-                            Color ForeColor = GameData.OcarinaTextboxBackgroundForePrimColors[0];
+                            SKColor ForeColor = GameData.OcarinaTextboxBackgroundForePrimColors[0];
 
                             if (BgForeColorId > 0 && BgForeColorId < GameData.OcarinaTextboxBackgroundForePrimColors.Length)
                                 ForeColor = GameData.OcarinaTextboxBackgroundForePrimColors[BgForeColorId];
@@ -482,14 +496,14 @@ namespace ZeldaMsgPreview
                             if (IsCredits)
                                 break;
 
-                            Bitmap imgArrow = Properties.Resources.Box_Arrow;
+                            SKBitmap imgArrow = Resources.Box_Arrow;
                             float xPosChoice = 48 - (destBmp.Width == GameData.ScreenWidth ? 0 : GameData.CroppedXPosOffset);
                             float yPosChoice = (curChar is (byte)OcarinaControlCode.THREE_CHOICES) ? 20 : 32;
                             yPosChoice += drawYOffs;
 
                             for (int ch = 0; ch < NumChoices; ch++)
                             {
-                                Helpers.DrawImage(destBmp, imgArrow, TargetGame == Game.Ocarina_Debug ? GameData.EndIconColorDebug : GameData.EndIconColor, 
+                                Helpers.DrawImage(destBmp, imgArrow, TargetGame == Game.Ocarina_Debug ? GameData.EndIconColorDebug : GameData.EndIconColor,
                                                  (int)(GameData.CharWidth * ScaleX), (int)(GameData.CharHeight * ScaleY), ref xPosChoice, ref yPosChoice, 0);
                                 yPosChoice += IsCredits ? GameData.LinebreakSizeCredits : GameData.LinebreakSize;
                             }
@@ -523,7 +537,7 @@ namespace ZeldaMsgPreview
             return destBmp;
         }
 
-        private Bitmap DrawText_Majora(Bitmap destBmp, bool brightenText)
+        private SKBitmap DrawText_Majora(SKBitmap destBmp, bool brightenText)
         {
             int curLine = 0;
 
@@ -536,7 +550,7 @@ namespace ZeldaMsgPreview
             float curScaleY = ScaleY;
 
             if (MajoraColor == null)
-                MajoraColor = (Color)GetMajoraColor((byte)MajoraControlCode.COLOR_DEFAULT);
+                MajoraColor = (SKColor)GetMajoraColor((byte)MajoraControlCode.COLOR_DEFAULT);
 
             DrawMajoraIcon(destBmp, ref curTextPosX);
 
@@ -556,7 +570,7 @@ namespace ZeldaMsgPreview
                     case (byte)MajoraControlCode.COLOR_SILVER:
                     case (byte)MajoraControlCode.COLOR_ORANGE:
                         {
-                            MajoraColor = (Color)GetMajoraColor(curChar);
+                            MajoraColor = (SKColor)GetMajoraColor(curChar);
                             break;
                         }
                     case (byte)MajoraControlCode.LINE_BREAK:
@@ -628,8 +642,8 @@ namespace ZeldaMsgPreview
                         }
                     case (byte)MajoraControlCode.BACKGROUND:
                         {
-                            Bitmap left = Properties.Resources.xmes_left;
-                            Bitmap right = Properties.Resources.xmes_right;
+                            SKBitmap left = Resources.xmes_left;
+                            SKBitmap right = Resources.xmes_right;
 
                             curTextPosX = 45 - drawXOffs;
 
@@ -638,10 +652,10 @@ namespace ZeldaMsgPreview
                             float xPosBgShadow = xPosBg;
                             float yPosBgShadow = yPosBg + 1;
 
-                            Helpers.DrawImage(destBmp, left, Color.Black, left.Width, left.Height, ref xPosBgShadow, ref yPosBgShadow, left.Width);
+                            Helpers.DrawImage(destBmp, left, SKColors.Black, left.Width, left.Height, ref xPosBgShadow, ref yPosBgShadow, left.Width);
                             Helpers.DrawImage(destBmp, left, GameData.MajoraBackgroundTagColor, left.Width, left.Height, ref xPosBg, ref yPosBg, left.Width);
 
-                            Helpers.DrawImage(destBmp, right, Color.Black, left.Width, left.Height, ref xPosBgShadow, ref yPosBgShadow, 0);
+                            Helpers.DrawImage(destBmp, right, SKColors.Black, left.Width, left.Height, ref xPosBgShadow, ref yPosBgShadow, 0);
                             Helpers.DrawImage(destBmp, right, GameData.MajoraBackgroundTagColor, left.Width, left.Height, ref xPosBg, ref yPosBg, 0);
 
                             curTextPosX += 32;
@@ -702,7 +716,7 @@ namespace ZeldaMsgPreview
                         }
                     default:
                         {
-                            Color actualColor = (Color)MajoraColor;
+                            SKColor actualColor = (SKColor)MajoraColor;
 
                             if (curChar >= (byte)MajoraControlCode.A_BUTTON && curChar <= (byte)MajoraControlCode.D_PAD)
                                 actualColor = GetMajoraButtonColor(curChar);
@@ -735,8 +749,8 @@ namespace ZeldaMsgPreview
             return destBmp;
         }
 
-        private Bitmap DrawTextInternal(Bitmap destBmp, byte character, Color charColor, bool brightenText,
-                                        float scaleX, float scaleY, ref float posX, ref float posY, int fixedWidth = -1)
+        private SKBitmap DrawTextInternal(SKBitmap destBmp, byte character, SKColor charColor, bool brightenText,
+                                float scaleX, float scaleY, ref float posX, ref float posY, int fixedWidth = -1)
         {
             // Handle space character early
             if (character == ' ')
@@ -753,7 +767,7 @@ namespace ZeldaMsgPreview
                 return destBmp;
             }
 
-            Bitmap charBmp = null;
+            SKBitmap charBmp = null;
             int startByte = (character - ' ') * 128;
 
             // Attempt to generate character from raw font data
@@ -769,7 +783,7 @@ namespace ZeldaMsgPreview
                                         ? $"majora_char_{character:X}"
                                         : $"char_{character:X}").ToLower();
 
-                charBmp = Properties.Resources.ResourceManager.GetObject(resCharName) as Bitmap;
+                charBmp = Resources.TryGetBitmap(resCharName);
 
                 if (charBmp == null)
                     return destBmp; // Fail silently if character not found
@@ -777,23 +791,37 @@ namespace ZeldaMsgPreview
 
             // Apply alpha manipulation and colorization
             charBmp = Helpers.ReverseAlphaMask(charBmp, brightenText);
-            Bitmap shadowBmp = charBmp;
+            SKBitmap shadowBmp = charBmp;
             charBmp = Helpers.Colorize(charBmp, charColor);
 
-            using (Graphics g = Graphics.FromImage(destBmp))
-            {
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
+            var sampling = new SKSamplingOptions(SKCubicResampler.Mitchell);
 
+            using (var canvas = new SKCanvas(destBmp))
+            {
                 // Draw shadow
                 if (Type != TextboxType.None_Black && Type != TextboxType.Majora_Bombers_Notebook && !MajoraIsBomberNotebook)
                 {
-                    shadowBmp = Helpers.Colorize(shadowBmp, Color.Black);
-                    shadowBmp.SetResolution(g.DpiX, g.DpiY);
-                    g.DrawImage(shadowBmp, new Rectangle((int)posX + 1, (int)posY + 1, (int)(GameData.CharWidth * scaleX), (int)(GameData.CharHeight * scaleY)));
+                    shadowBmp = Helpers.Colorize(shadowBmp, SKColors.Black);
+
+                    var shadowRect = new SKRect(
+                        (int)posX + 1,
+                        (int)posY + 1,
+                        (int)posX + 1 + (int)(GameData.CharWidth * scaleX),
+                        (int)posY + 1 + (int)(GameData.CharHeight * scaleY));
+
+                    using (var shadowImage = SKImage.FromBitmap(shadowBmp))
+                        canvas.DrawImage(shadowImage, shadowRect, sampling);
                 }
 
                 // Draw character
-                g.DrawImage(charBmp, new Rectangle((int)posX, (int)posY, (int)(GameData.CharWidth * scaleX), (int)(GameData.CharHeight * scaleY)));
+                var charRect = new SKRect(
+                    (int)posX,
+                    (int)posY,
+                    (int)posX + (int)(GameData.CharWidth * scaleX),
+                    (int)posY + (int)(GameData.CharHeight * scaleY));
+
+                using (var charImage = SKImage.FromBitmap(charBmp))
+                    canvas.DrawImage(charImage, charRect, sampling);
             }
 
             // Advance position for next character
@@ -813,9 +841,9 @@ namespace ZeldaMsgPreview
             return destBmp;
         }
 
-        public Bitmap GetPreview(bool ForceFullScreenPreview = false, bool BrightenText = true)
+        public SKBitmap GetPreview(bool ForceFullScreenPreview = false, bool BrightenText = true)
         {
-            Bitmap bmp;
+            SKBitmap bmp;
 
             try
             {
@@ -901,39 +929,46 @@ namespace ZeldaMsgPreview
             }
         }
 
-        public Bitmap GetPreview(bool ForceFullScreenPreview = false, bool BrightenText = true)
+        public SKBitmap GetPreview(bool ForceFullScreenPreview = false, bool BrightenText = true)
         {
             if (Textboxes == null || Textboxes.Count == 0)
                 return null;
 
-            Bitmap bmpOut = Textboxes[0].GetPreview(ForceFullScreenPreview, BrightenText);
+            SKBitmap bmpOut = Textboxes[0].GetPreview(ForceFullScreenPreview, BrightenText);
 
             if (Textboxes.Count > 1)
             {
                 SynchronizeTextBoxProperties(0, 1);
 
-                bmpOut = new Bitmap(bmpOut.Width, Textboxes.Count * bmpOut.Height);
-                bmpOut.MakeTransparent();
+                var info = new SKImageInfo(bmpOut.Width, Textboxes.Count * bmpOut.Height, SKColorType.Rgba8888, SKAlphaType.Unpremul);
+                var combined = new SKBitmap(info);
+                var sampling = new SKSamplingOptions(SKFilterMode.Nearest);
 
-                using (Graphics g = Graphics.FromImage(bmpOut))
+                using (var canvas = new SKCanvas(combined))
                 {
-                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
-                    g.DrawImage(Textboxes[0].GetPreview(ForceFullScreenPreview, BrightenText), 0, 0);
+                    using (SKBitmap first = Textboxes[0].GetPreview(ForceFullScreenPreview, BrightenText))
+                    {
+                        canvas.DrawBitmap(first, 0, 0, sampling, paint: null);
+                    }
 
                     for (int i = 1; i < Textboxes.Count; i++)
                     {
-                        Bitmap temp = Textboxes[i].GetPreview(ForceFullScreenPreview, BrightenText);
+                        using (SKBitmap temp = Textboxes[i].GetPreview(ForceFullScreenPreview, BrightenText))
+                        {
+                            if (i + 1 < Textboxes.Count)
+                                SynchronizeTextBoxProperties(i, i + 1);
 
-                        if (i + 1 < Textboxes.Count)
-                            SynchronizeTextBoxProperties(i, i + 1);
-
-                        if (temp != null)
-                            g.DrawImage(temp, 0, temp.Height * i);
+                            if (temp != null)
+                                canvas.DrawBitmap(temp, 0, temp.Height * i, sampling, paint: null);
+                        }
                     }
                 }
+
+                bmpOut.Dispose();
+                bmpOut = combined;
             }
 
-            bmpOut = Textboxes[Textboxes.Count - 1].DrawChoiceMajora(bmpOut, bmpOut.Height - bmpOut.Height / Textboxes.Count);
+            bmpOut = Textboxes[^1].DrawChoiceMajora(bmpOut,bmpOut.Height - bmpOut.Height / Textboxes.Count);
 
             return bmpOut;
         }

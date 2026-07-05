@@ -1,8 +1,9 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Drawing;
 
 namespace ZeldaMsgPreview
 {
@@ -99,17 +100,17 @@ namespace ZeldaMsgPreview
             {TextboxType.Ocarina, Color.FromArgb(180, 255, 0, 0) },
         };
 
-        public static readonly Color[] OcarinaTextboxBackgroundForePrimColors = new Color[]
+        public static readonly SKColor[] OcarinaTextboxBackgroundForePrimColors = new SKColor[]
         {
-            Color.FromArgb(255, 255, 255),
-            Color.FromArgb(50, 20, 0),
-            Color.FromArgb(255, 60, 0),
+            new SKColor(255, 255, 255),
+            new SKColor(50, 20, 0),
+            new SKColor(255, 60, 0),
         };
 
-        public static readonly Color[] OcarinaTextboxBackgroundBackPrimColors = new Color[]
+        public static readonly SKColor[] OcarinaTextboxBackgroundBackPrimColors = new SKColor[]
         {
-            Color.FromArgb(0, 0, 0),
-            Color.FromArgb(220, 150, 0),
+            new SKColor(0, 0, 0),
+            new SKColor(220, 150, 0),
         };
 
         public static readonly int[] OcarinaTextboxBackgroundShadowOffsets = new int[]
@@ -147,10 +148,10 @@ namespace ZeldaMsgPreview
 
         public static readonly int OcarinaEndIconXPos = 158;
         public static readonly int OcarinaEndIconYPos = 102;
-        public static readonly Color EndIconColor = Color.FromArgb(0, 80, 200);
-        public static readonly Color EndIconColorDebug = Color.FromArgb(0, 200, 80);
 
-        public static readonly Color MajoraBackgroundTagColor = Color.FromArgb(255, 60, 0);
+        public static readonly SKColor EndIconColor = new SKColor(0, 80, 200);
+        public static readonly SKColor EndIconColorDebug = new SKColor(0, 200, 80);
+        public static readonly SKColor MajoraBackgroundTagColor = new SKColor(255, 60, 0);
 
         public static readonly int LinebreakSizeBombers = 22;
         public static readonly int LinebreakSize = 12;
@@ -740,151 +741,151 @@ namespace ZeldaMsgPreview
             { 0xF9, ItemId.MESSAGE_ITEM_NONE }
         };
 
-        public static readonly Dictionary<OcarinaMsgColor, Color[]> OcarinaMsgRGB = new Dictionary<OcarinaMsgColor, Color[]>
+        public static readonly Dictionary<OcarinaMsgColor, SKColor[]> OcarinaMsgRGB = new Dictionary<OcarinaMsgColor, SKColor[]>
         {
             [OcarinaMsgColor.D] = new[]
             {
-                Color.FromArgb(255, 255, 255),   // Default
-                Color.FromArgb(255, 255, 255)    // Wooden
+                new SKColor(255, 255, 255),   // Default
+                new SKColor(255, 255, 255)    // Wooden
             },
 
             [OcarinaMsgColor.R] = new[]
             {
-                Color.FromArgb(255, 60, 60),     // Default
-                Color.FromArgb(255, 120, 0)      // Wooden
+                new SKColor(255, 60, 60),     // Default
+                new SKColor(255, 120, 0)      // Wooden
             },
 
             [OcarinaMsgColor.B] = new[]
             {
-                Color.FromArgb(80, 90, 255),     // Default
-                Color.FromArgb(80, 110, 255)     // Wooden
+                new SKColor(80, 90, 255),     // Default
+                new SKColor(80, 110, 255)     // Wooden
             },
 
             [OcarinaMsgColor.C] = new[]
             {
-                Color.FromArgb(100, 180, 255),   // Default
-                Color.FromArgb(90, 180, 255)     // Wooden
+                new SKColor(100, 180, 255),   // Default
+                new SKColor(90, 180, 255)     // Wooden
             },
 
             [OcarinaMsgColor.M] = new[]
             {
-                Color.FromArgb(255, 150, 180),   // Default
-                Color.FromArgb(210, 100, 255)    // Wooden
+                new SKColor(255, 150, 180),   // Default
+                new SKColor(210, 100, 255)    // Wooden
             },
 
             [OcarinaMsgColor.Y] = new[]
             {
-                Color.FromArgb(225, 255, 50),    // Default
-                Color.FromArgb(255, 255, 30)     // Wooden
+                new SKColor(225, 255, 50),    // Default
+                new SKColor(255, 255, 30)     // Wooden
             },
 
             [OcarinaMsgColor.BLK] = new[]
             {
-                Color.FromArgb(0, 0, 0),         // Default
-                Color.FromArgb(0, 0, 0)          // Wooden
+                new SKColor(0, 0, 0),         // Default
+                new SKColor(0, 0, 0)          // Wooden
             },
 
             [OcarinaMsgColor.G] = new[]
             {
-                Color.FromArgb(70, 255, 80),     // Default
-                Color.FromArgb(70, 255, 80)      // Wooden
+                new SKColor(70, 255, 80),     // Default
+                new SKColor(70, 255, 80)      // Wooden
             }
         };
 
-        public static readonly Dictionary<MajoraControlCode, Color[]> MajoraMsgRGB = new Dictionary<MajoraControlCode, Color[]>
+        public static readonly Dictionary<MajoraControlCode, SKColor[]> MajoraMsgRGB = new Dictionary<MajoraControlCode, SKColor[]>
         {
             [MajoraControlCode.COLOR_DEFAULT] = new[]
             {
-                Color.FromArgb(255, 255, 255),
-                Color.FromArgb(255, 255, 255),
-                Color.FromArgb(0, 0, 0),
-                Color.FromArgb(0, 0, 0),
-                Color.FromArgb(0, 0, 0),
+                new SKColor(255, 255, 255),
+                new SKColor(255, 255, 255),
+                new SKColor(0, 0, 0),
+                new SKColor(0, 0, 0),
+                new SKColor(0, 0, 0),
             },
 
             [MajoraControlCode.COLOR_RED] = new[]
             {
-                Color.FromArgb(255, 60, 60),
-                Color.FromArgb(255, 120, 0),
-                Color.FromArgb(255, 60, 60),
-                Color.FromArgb(195, 0, 0),
-                Color.FromArgb(255, 60, 60),
+                new SKColor(255, 60, 60),
+                new SKColor(255, 120, 0),
+                new SKColor(255, 60, 60),
+                new SKColor(195, 0, 0),
+                new SKColor(255, 60, 60),
             },
 
             [MajoraControlCode.COLOR_GREEN] = new[]
             {
-                Color.FromArgb(70, 255, 80),
-                Color.FromArgb(70, 255, 80),
-                Color.FromArgb(70, 255, 80),
-                Color.FromArgb(70, 255, 80),
-                Color.FromArgb(110, 170, 255),
+                new SKColor(70, 255, 80),
+                new SKColor(70, 255, 80),
+                new SKColor(70, 255, 80),
+                new SKColor(70, 255, 80),
+                new SKColor(110, 170, 255),
             },
 
             [MajoraControlCode.COLOR_BLUE] = new[]
             {
-                Color.FromArgb(80, 90, 255),
-                Color.FromArgb(80, 110, 255),
-                Color.FromArgb(80, 90, 255),
-                Color.FromArgb(80, 90, 255),
-                Color.FromArgb(80, 90, 255),
+                new SKColor(80, 90, 255),
+                new SKColor(80, 110, 255),
+                new SKColor(80, 90, 255),
+                new SKColor(80, 90, 255),
+                new SKColor(80, 90, 255),
             },
 
             [MajoraControlCode.COLOR_YELLOW] = new[]
             {
-                Color.FromArgb(255, 255, 50),
-                Color.FromArgb(255, 255, 30),
-                Color.FromArgb(255, 255, 50),
-                Color.FromArgb(255, 255, 50),
-                Color.FromArgb(255, 255, 50),
+                new SKColor(255, 255, 50),
+                new SKColor(255, 255, 30),
+                new SKColor(255, 255, 50),
+                new SKColor(255, 255, 50),
+                new SKColor(255, 255, 50),
             },
 
             [MajoraControlCode.COLOR_NAVY] = new[]
             {
-                Color.FromArgb(80, 150, 255),
-                Color.FromArgb(90, 180, 255),
-                Color.FromArgb(80, 150, 255),
-                Color.FromArgb(80, 150, 255),
-                Color.FromArgb(80, 150, 255),
+                new SKColor(80, 150, 255),
+                new SKColor(90, 180, 255),
+                new SKColor(80, 150, 255),
+                new SKColor(80, 150, 255),
+                new SKColor(80, 150, 255),
             },
 
             [MajoraControlCode.COLOR_PINK] = new[]
             {
-                Color.FromArgb(255, 150, 180),
-                Color.FromArgb(210, 100, 255),
-                Color.FromArgb(255, 150, 180),
-                Color.FromArgb(255, 150, 180),
-                Color.FromArgb(255, 150, 180),
+                new SKColor(255, 150, 180),
+                new SKColor(210, 100, 255),
+                new SKColor(255, 150, 180),
+                new SKColor(255, 150, 180),
+                new SKColor(255, 150, 180),
             },
 
             [MajoraControlCode.COLOR_SILVER] = new[]
             {
-                Color.FromArgb(170, 170, 170),
-                Color.FromArgb(170, 170, 170),
-                Color.FromArgb(170, 170, 170),
-                Color.FromArgb(170, 170, 170),
-                Color.FromArgb(170, 170, 170),
+                new SKColor(170, 170, 170),
+                new SKColor(170, 170, 170),
+                new SKColor(170, 170, 170),
+                new SKColor(170, 170, 170),
+                new SKColor(170, 170, 170),
             },
 
             [MajoraControlCode.COLOR_ORANGE] = new[]
             {
-                Color.FromArgb(255, 130, 30),
-                Color.FromArgb(255, 130, 30),
-                Color.FromArgb(255, 130, 30),
-                Color.FromArgb(255, 130, 30),
-                Color.FromArgb(255, 130, 30),
+                new SKColor(255, 130, 30),
+                new SKColor(255, 130, 30),
+                new SKColor(255, 130, 30),
+                new SKColor(255, 130, 30),
+                new SKColor(255, 130, 30),
             },
         };
 
-        public static readonly Dictionary<MajoraControlCode, Color> MajoraButtonRGB = new Dictionary<MajoraControlCode, Color>
+        public static readonly Dictionary<MajoraControlCode, SKColor> MajoraButtonRGB = new Dictionary<MajoraControlCode, SKColor>
         {
-            [MajoraControlCode.COLOR_RED] = Color.FromArgb(255, 60, 60),
-            [MajoraControlCode.COLOR_GREEN] = Color.FromArgb(70, 255, 80),
-            [MajoraControlCode.COLOR_BLUE] = Color.FromArgb(80, 90, 255),
-            [MajoraControlCode.COLOR_YELLOW] = Color.FromArgb(255, 255, 50),
-            [MajoraControlCode.COLOR_NAVY] = Color.FromArgb(80, 150, 255),
-            [MajoraControlCode.COLOR_PINK] = Color.FromArgb(255, 150, 180),
-            [MajoraControlCode.COLOR_SILVER] = Color.FromArgb(180, 180, 200),
-            [MajoraControlCode.COLOR_ORANGE] = Color.FromArgb(255, 130, 30),
+            [MajoraControlCode.COLOR_RED] = new SKColor(255, 60, 60),
+            [MajoraControlCode.COLOR_GREEN] = new SKColor(70, 255, 80),
+            [MajoraControlCode.COLOR_BLUE] = new SKColor(80, 90, 255),
+            [MajoraControlCode.COLOR_YELLOW] = new SKColor(255, 255, 50),
+            [MajoraControlCode.COLOR_NAVY] = new SKColor(80, 150, 255),
+            [MajoraControlCode.COLOR_PINK] = new SKColor(255, 150, 180),
+            [MajoraControlCode.COLOR_SILVER] = new SKColor(180, 180, 200),
+            [MajoraControlCode.COLOR_ORANGE] = new SKColor(255, 130, 30),
         };
 
         public static readonly Dictionary<MajoraControlCode, MajoraControlCode> MajoraButtonRGBIndexes = new Dictionary<MajoraControlCode, MajoraControlCode>

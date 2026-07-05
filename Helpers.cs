@@ -1,15 +1,19 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace ZeldaMsgPreview
 {
     public static class Helpers
     {
+        // SKPaint.FilterQuality / SKFilterQuality are obsolete - SKCanvas.DrawBitmap has no
+        // overload that accepts SKSamplingOptions, so all drawing here goes through
+        // DrawImage(SKImage, ...) instead, which does. Mitchell cubic resampling is the
+        // closest equivalent to the old SKFilterQuality.High for general-purpose scaling.
+        private static readonly SKSamplingOptions HighQualitySampling =
+            new SKSamplingOptions(SKCubicResampler.Mitchell);
+
         public static byte GetByteFromList(List<byte> array, int i)
         {
             byte outB = 0;
@@ -19,196 +23,162 @@ namespace ZeldaMsgPreview
 
             return outB;
         }
-        public static Bitmap DrawImage(Bitmap destBmp, Bitmap srcBmp, Color colorizeColor, int xSize, int ySize, ref float xPos, ref float yPos, float moveXBy, bool revAlpha = true)
+
+        public static SKBitmap DrawImage(SKBitmap destBmp, SKBitmap srcBmp, SKColor colorizeColor,
+            int xSize, int ySize, ref float xPos, ref float yPos, float moveXBy, bool revAlpha = true)
         {
             if (revAlpha)
                 srcBmp = Helpers.ReverseAlphaMask(srcBmp);
 
             srcBmp = Helpers.Colorize(srcBmp, colorizeColor);
 
-            using (Graphics g = Graphics.FromImage(destBmp))
+            using (var canvas = new SKCanvas(destBmp))
+            using (var image = SKImage.FromBitmap(srcBmp))
             {
-                srcBmp.SetResolution(g.DpiX, g.DpiY);
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
-                g.DrawImage(srcBmp, new Rectangle((int)xPos, (int)yPos, xSize, ySize));
+                var destRect = new SKRect(xPos, yPos, xPos + xSize, yPos + ySize);
+                canvas.DrawImage(image, destRect, HighQualitySampling);
             }
 
             xPos += moveXBy;
             return destBmp;
         }
 
-        public static Bitmap ReverseAlphaMask(Bitmap bmp, bool Brighten = false)
+        public static SKBitmap ReverseAlphaMask(SKBitmap bmp, bool Brighten = false)
         {
-            // Check if running under Mono
-            if (GameData.RunningUnderMono)
+            var info = new SKImageInfo(bmp.Width, bmp.Height, SKColorType.Rgba8888, SKAlphaType.Unpremul);
+            SKBitmap result = new SKBitmap(info);
+
+            using (var canvas = new SKCanvas(result))
             {
-                // Mono: Use GetPixel/SetPixel approach (slower but more reliable)
-                Bitmap result = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format32bppArgb);
-
-                for (int x = 0; x < bmp.Width; x++)
+                using (var image = SKImage.FromBitmap(bmp))
                 {
-                    for (int y = 0; y < bmp.Height; y++)
-                    {
-                        Color pixel = bmp.GetPixel(x, y);
-                        Color newPixel;
-
-                        if (Brighten)
-                        {
-                            newPixel = Color.FromArgb(pixel.R, 255, 255, 255);
-                        }
-                        else
-                        {
-                            newPixel = Color.FromArgb(pixel.R, pixel.R, pixel.G, pixel.B);
-                        }
-
-                        result.SetPixel(x, y, newPixel);
-                    }
+                    canvas.DrawImage(image, 0, 0, new SKSamplingOptions(SKFilterMode.Nearest), paint: null);
                 }
-
-                return result;
             }
-            else
+
+            IntPtr pixelsAddr = result.GetPixels();
+            int rowBytes = result.RowBytes;
+            int totalBytes = rowBytes * result.Height;
+
+            byte[] rgbaValues = new byte[totalBytes];
+            Marshal.Copy(pixelsAddr, rgbaValues, 0, totalBytes);
+
+            for (int i = 3; i < rgbaValues.Length; i += 4)
             {
-                // .NET Framework/Core: Use original fast approach
-                bmp.MakeTransparent();
+                rgbaValues[i] = rgbaValues[i - 3];
 
-                BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
-
-                int bytes = Math.Abs(bmpData.Stride) * bmp.Height;
-                byte[] rgbaValues = new byte[bytes];
-
-                Marshal.Copy(bmpData.Scan0, rgbaValues, 0, bytes);
-
-                for (int i = 3; i < rgbaValues.Length; i += 4)
+                if (Brighten)
                 {
-                    rgbaValues[i] = rgbaValues[i - 3];
-
-                    if (Brighten)
-                    {
-                        rgbaValues[i - 1] = 255;
-                        rgbaValues[i - 2] = 255;
-                        rgbaValues[i - 3] = 255;
-                    }
+                    rgbaValues[i - 1] = 255;
+                    rgbaValues[i - 2] = 255;
+                    rgbaValues[i - 3] = 255;
                 }
-
-                Marshal.Copy(rgbaValues, 0, bmpData.Scan0, bytes);
-
-                bmp.UnlockBits(bmpData);
-
-                return bmp;
             }
+
+            Marshal.Copy(rgbaValues, 0, pixelsAddr, totalBytes);
+
+            return result;
         }
 
-        public static Bitmap Resize(Bitmap bmp, float scale)
+        public static SKBitmap Resize(SKBitmap bmp, float scale)
         {
-            Bitmap result = new Bitmap((int)(bmp.Width * scale), (int)(bmp.Height * scale));
+            int newWidth = (int)(bmp.Width * scale);
+            int newHeight = (int)(bmp.Height * scale);
 
-            using (Graphics g = Graphics.FromImage(result))
+            var result = new SKBitmap(newWidth, newHeight);
+
+            using (var canvas = new SKCanvas(result))
+            using (var image = SKImage.FromBitmap(bmp))
             {
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
-                g.DrawImage(bmp, 0, 0, (int)(bmp.Width * scale), (int)(bmp.Height * scale));
+                canvas.DrawImage(image, new SKRect(0, 0, newWidth, newHeight), HighQualitySampling);
             }
 
             return result;
         }
 
-        public static Bitmap Colorize(Bitmap bmp, Color cl)
+        public static SKBitmap Colorize(SKBitmap bmp, SKColor cl)
         {
-            float R = (float)((float)cl.R / (float)255);
-            float G = (float)((float)cl.G / (float)255);
-            float B = (float)((float)cl.B / (float)255);
-            float A = 1;
+            float R = cl.Red / 255f;
+            float G = cl.Green / 255f;
+            float B = cl.Blue / 255f;
+            const float A = 1f;
 
-
-            float[][] colorMatrixElements =
+            float[] colorMatrix =
             {
-                new float[] {R,  0,  0,  0,  0},
-                new float[] {0,  G,  0,  0,  0},
-                new float[] {0,  0,  B,  0,  0},
-                new float[] {0,  0,  0,  A,  0},
-                new float[] {0,  0,  0,  0,  0}
+                R, 0, 0, 0, 0,
+                0, G, 0, 0, 0,
+                0, 0, B, 0, 0,
+                0, 0, 0, A, 0
             };
 
-            ColorMatrix cm = new ColorMatrix(colorMatrixElements);
+            var result = new SKBitmap(bmp.Width, bmp.Height);
 
-            ImageAttributes imageAttributes = new ImageAttributes();
-            imageAttributes.SetColorMatrix(cm, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-
-            Bitmap bm = new Bitmap(bmp.Width, bmp.Height);
-
-            using (Graphics g = Graphics.FromImage(bm))
+            using (var canvas = new SKCanvas(result))
+            using (var image = SKImage.FromBitmap(bmp))
+            using (var paint = new SKPaint
             {
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
-                g.DrawImage(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height), 0, 0, bmp.Width, bmp.Height, GraphicsUnit.Pixel, imageAttributes);
+                ColorFilter = SKColorFilter.CreateColorMatrix(colorMatrix)
+            })
+            {
+                canvas.DrawImage(image, new SKRect(0, 0, bmp.Width, bmp.Height), HighQualitySampling, paint);
             }
 
-            return bm;
+            return result;
         }
 
-        public static Bitmap FlipBitmapX_MonoSafe(Bitmap bmp)
+        public static SKBitmap FlipBitmapX(SKBitmap bmp)
         {
-            if (GameData.RunningUnderMono)
-            {
-                Bitmap returnBitmap = new Bitmap(bmp.Width, bmp.Height);
+            var result = new SKBitmap(bmp.Width, bmp.Height);
 
-                using (Graphics g = Graphics.FromImage(returnBitmap))
+            using (var canvas = new SKCanvas(result))
+            {
+                using (var image = SKImage.FromBitmap(bmp))
                 {
-                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
-                    g.TranslateTransform((float)bmp.Width / 2, (float)bmp.Height / 2);
-                    g.ScaleTransform(-1, 1);
-                    g.TranslateTransform(-(float)bmp.Width / 2, -(float)bmp.Height / 2);
-                    g.DrawImage(bmp, new Point(0, 0));
+                    canvas.Translate(bmp.Width / 2f, bmp.Height / 2f);
+                    canvas.Scale(-1, 1);
+                    canvas.Translate(-bmp.Width / 2f, -bmp.Height / 2f);
+                    canvas.DrawImage(image, 0, 0, new SKSamplingOptions(SKFilterMode.Nearest), paint: null);
                 }
+            }
 
-                return returnBitmap;
-            }
-            else
-            {
-                bmp.RotateFlip(RotateFlipType.RotateNoneFlipX);
-                return bmp;
-            }
+            return result;
         }
 
-        public static Bitmap GetBitmapFromI4FontChar(byte[] bytes)
+        public static SKBitmap GetBitmapFromI4FontChar(byte[] bytes)
         {
             const int width = 16;
             const int height = 16;
 
-            Bitmap bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            BitmapData data = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, bmp.PixelFormat);
+            var info = new SKImageInfo(width, height, SKColorType.Rgba8888, SKAlphaType.Unpremul);
+            var bmp = new SKBitmap(info);
 
-            unsafe
+            IntPtr pixelsAddr = bmp.GetPixels();
+            int rowBytes = bmp.RowBytes;
+            int totalBytes = rowBytes * height;
+            byte[] pixelData = new byte[totalBytes];
+
+            int offset = 0;
+            foreach (byte b in bytes)
             {
-                byte* ptr = (byte*)data.Scan0;
+                byte ab = (byte)((b >> 4) * 0x11);
+                byte bb = (byte)((b & 0x0F) * 0x11);
 
-                int i = 0;
-                foreach (byte b in bytes)
-                {
-                    // Extract upper and lower 4-bit values, expand to 8-bit grayscale
-                    byte ab = (byte)((b >> 4) * 0x11);
-                    byte bb = (byte)((b & 0x0F) * 0x11);
+                pixelData[offset + 0] = ab;
+                pixelData[offset + 1] = ab;
+                pixelData[offset + 2] = ab;
+                pixelData[offset + 3] = 255;
+                offset += 4;
 
-                    // Write first pixel (ARGB)
-                    ptr[0] = ab;     // B
-                    ptr[1] = ab;     // G
-                    ptr[2] = ab;     // R
-                    ptr[3] = 255;    // A
-                    ptr += 4;
-
-                    // Write second pixel (ARGB)
-                    ptr[0] = bb;     // B
-                    ptr[1] = bb;     // G
-                    ptr[2] = bb;     // R
-                    ptr[3] = 255;    // A
-                    ptr += 4;
-
-                    i += 2;
-                }
+                pixelData[offset + 0] = bb;
+                pixelData[offset + 1] = bb;
+                pixelData[offset + 2] = bb;
+                pixelData[offset + 3] = 255;
+                offset += 4;
             }
 
-            bmp.UnlockBits(data);
+            Marshal.Copy(pixelData, 0, pixelsAddr, totalBytes);
+
             return bmp;
         }
-
     }
 }
