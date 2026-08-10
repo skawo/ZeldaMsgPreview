@@ -46,7 +46,9 @@ namespace ZeldaMsgPreview
 
             for (int i = 0; i < totalBytes; i += 4)
             {
+                byte a = p[i];
                 p[i + 3] = p[i];
+                p[i] = a;
 
                 if (brighten)
                 {

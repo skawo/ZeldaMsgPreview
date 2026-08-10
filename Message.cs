@@ -245,7 +245,7 @@ namespace ZeldaMsgPreview
             int posX = destBmp.Width == GameData.ScreenWidth ? GameData.TextboxXPosition : 0;
 
             // Draw the left half.
-            canvas.DrawBitmap(srcBmp, posX, posY, Helpers.HighQualitySampling, paint: null);
+            canvas.DrawBitmap(srcBmp, posX, posY, Helpers.HighQualitySampling);
 
             // Draw the mirrored right half.
             canvas.Save();
@@ -253,7 +253,7 @@ namespace ZeldaMsgPreview
             // Mirror about the left edge of where the right image should appear.
             canvas.Translate(2 * (posX + srcBmp.Width), 0);
             canvas.Scale(-1, 1);
-            canvas.DrawBitmap(srcBmp, posX, posY, Helpers.HighQualitySampling, paint: null);
+            canvas.DrawBitmap(srcBmp, posX, posY, Helpers.HighQualitySampling);
             canvas.Restore();
 
             return destBmp;
@@ -962,7 +962,7 @@ namespace ZeldaMsgPreview
                 {
                     using (SKBitmap first = Textboxes[0].GetPreview(ForceFullScreenPreview, BrightenText))
                     {
-                        canvas.DrawBitmap(first, 0, 0, Helpers.HighQualitySampling, paint: null);
+                        canvas.DrawBitmap(first, 0, 0, Helpers.HighQualitySampling);
                     }
 
                     for (int i = 1; i < Textboxes.Count; i++)
@@ -973,7 +973,7 @@ namespace ZeldaMsgPreview
                                 SynchronizeTextBoxProperties(i, i + 1);
 
                             if (temp != null)
-                                canvas.DrawBitmap(temp, 0, temp.Height * i, Helpers.HighQualitySampling, paint: null);
+                                canvas.DrawBitmap(temp, 0, temp.Height * i, Helpers.HighQualitySampling);
                         }
                     }
                 }
